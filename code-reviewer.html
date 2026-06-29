@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeCheck — AI Code Reviewer</title>
+<link rel="stylesheet" href="code-reviewer.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">&lt;/&gt;</div>
+    CodeCheck
+  </div>
+  <div class="header-right">
+    <select id="lang">
+      <option value="javascript">JavaScript</option>
+      <option value="typescript">TypeScript</option>
+      <option value="python">Python</option>
+      <option value="java">Java</option>
+      <option value="cpp">C++</option>
+      <option value="go">Go</option>
+      <option value="rust">Rust</option>
+      <option value="php">PHP</option>
+      <option value="swift">Swift</option>
+      <option value="kotlin">Kotlin</option>
+      <option value="csharp">C#</option>
+    </select>
+    <button class="btn-run" id="run-btn" onclick="analyze()">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M5 3l14 9-14 9V3z"/>
+      </svg>
+      Analyze
+    </button>
+  </div>
+</header>
+
+<main>
+  <!-- ── LEFT PANE: code input ── -->
+  <div class="pane">
+    <div class="pane-bar">
+      <span class="pane-label" id="line-count">1 line</span>
+      <div class="pane-btns">
+        <button class="btn-sm" onclick="loadExample()">Example</button>
+        <button class="btn-sm" onclick="clearAll()">Clear</button>
+        <button class="btn-sm" onclick="copyCode()">Copy</button>
+      </div>
+    </div>
+    <div class="editor-wrap">
+      <div class="line-gutter" id="gutter"></div>
+      <textarea id="code-input" spellcheck="false" autocorrect="off" autocomplete="off"
+        placeholder="// Paste your code here&#10;// or click Example to load a sample&#10;// then hit Analyze (or Ctrl + Enter)"></textarea>
+    </div>
+  </div>
+
+  <!-- ── RIGHT PANE: review output ── -->
+  <div class="pane">
+    <div class="pane-bar">
+      <span class="pane-label">AI Review</span>
+      <div class="pane-btns">
+        <span class="claude-badge" id="model-pill" style="display:none">Claude</span>
+        <button class="btn-sm" id="copy-rev" onclick="copyReview()" style="display:none">Copy review</button>
+      </div>
+    </div>
+    <div class="output-body" id="output">
+      <div class="idle">
+        <div class="idle-icon">&lt;/&gt;</div>
+        <h3>Ready to review</h3>
+        <p>Paste code on the left and click Analyze</p>
+        <p style="margin-top:5px">or press <kbd>Ctrl+Enter</kbd></p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script src="code-reviewer.js"></script>
+</body>
+</html>
