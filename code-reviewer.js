@@ -7,6 +7,8 @@ const runBtn    = document.getElementById('run-btn');
 const modelPill = document.getElementById('model-pill');
 const copyRev   = document.getElementById('copy-rev');
 const toastEl   = document.getElementById('toast');
+const clearBtn  = document.getElementById('clear-btn');
+const copyBtn   = document.getElementById('copy-btn');
 
 let fullReview = '';
 let toastTimer;
@@ -16,6 +18,11 @@ function updateGutter() {
   const lines = codeEl.value.split('\n').length;
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
   gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
+
+  // Enable/disable Clear and Copy buttons based on content
+  const hasContent = codeEl.value.trim().length > 0;
+  clearBtn.disabled = !hasContent;
+  copyBtn.disabled = !hasContent;
 }
 
 codeEl.addEventListener('input', updateGutter);
@@ -154,7 +161,7 @@ function copyReview() {
 // ── UI STATE HELPERS ───────────────────────────────
 function showIdle() {
   outputEl.innerHTML = `<div class="idle">
-    <div class="idle-icon">&lt;/&gt;</div>
+    <div class="idle-icon" aria-hidden="true">&lt;/&gt;</div>
     <h3>Ready to review</h3>
     <p>Paste code on the left and click Analyze</p>
     <p style="margin-top:5px">or press <kbd>Ctrl+Enter</kbd></p>
