@@ -1,0 +1,4 @@
+## 2026-07-18 - Client-side API Key Exposure and Absence of Authentication Headers
+**Vulnerability:** Client-side API fetch calls directly to the Anthropic Messages API without any key or authentication headers, causing request failures and risking key exposure if hardcoded.
+**Learning:** Client-only web applications cannot securely use backend-stored environment variables. Hardcoding credentials in client-side code exposes secrets to anyone who visits the site. Storing keys securely in user-provided, password-masked inputs and persisting them locally via `localStorage` resolves the authentication issue without exposing credentials.
+**Prevention:** Always require user-provided credentials for client-only/serverless integrations, or delegate authentication to a secure backend reverse-proxy. Ensure client-side API keys are entered via a masked `<input type="password">` and persisted locally in the user's browser context.
