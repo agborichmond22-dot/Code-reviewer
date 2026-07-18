@@ -1,0 +1,3 @@
+## 2026-07-18 - Custom Inset Focus Ring for Dark-Theme Code Textareas with Gutters
+**Learning:** Standard textareas with separate line-number gutters can suffer from layout shifts or ugly border alignments if focus rings are applied to standard outlines/borders. Applying `box-shadow: inset 0 0 0 2px var(--accent)` on the focused `#code-input` textarea itself provides an extremely modern, clean, and visible focus indicator without affecting layout positioning, sibling scroll alignment, or gutter margins.
+**Action:** When designing code-editors or multi-pane textareas, use inset box-shadow focus rings to guarantee accessibility while preserving perfect layout and pixel alignments.
