@@ -12,8 +12,27 @@ let fullReview = '';
 let toastTimer;
 
 // ── LINE NUMBERS ───────────────────────────────────
+let lastLineCount = 0;
+
+// Fast line counting without allocating arrays or splitting strings
+function countLines(str) {
+  let count = 1;
+  let pos = 0;
+  while ((pos = str.indexOf('\n', pos)) !== -1) {
+    count++;
+    pos++;
+  }
+  return count;
+}
+
 function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+  const val = codeEl.value;
+  const lines = countLines(val);
+
+  // Avoid layout thrashing and DOM updates if line count has not changed
+  if (lines === lastLineCount) return;
+  lastLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
   gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
 }
