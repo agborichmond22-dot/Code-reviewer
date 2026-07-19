@@ -14,7 +14,7 @@
     CodeCheck
   </div>
   <div class="header-right">
-    <select id="lang">
+    <select id="lang" aria-label="Select programming language">
       <option value="javascript">JavaScript</option>
       <option value="typescript">TypeScript</option>
       <option value="python">Python</option>
@@ -50,6 +50,7 @@
     <div class="editor-wrap">
       <div class="line-gutter" id="gutter"></div>
       <textarea id="code-input" spellcheck="false" autocorrect="off" autocomplete="off"
+        aria-label="Source code input editor"
         placeholder="// Paste your code here&#10;// or click Example to load a sample&#10;// then hit Analyze (or Ctrl + Enter)"></textarea>
     </div>
   </div>
