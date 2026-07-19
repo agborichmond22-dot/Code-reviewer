@@ -10,12 +10,30 @@ const toastEl   = document.getElementById('toast');
 
 let fullReview = '';
 let toastTimer;
+let lastLineCount = 0;
 
 // ── LINE NUMBERS ───────────────────────────────────
 function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+  const val = codeEl.value;
+  let lines = 1;
+  let pos = 0;
+  while ((pos = val.indexOf('\n', pos)) !== -1) {
+    lines++;
+    pos++;
+  }
+
+  if (lines === lastLineCount) {
+    return;
+  }
+  lastLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
-  gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
+
+  let html = '1';
+  for (let i = 2; i <= lines; i++) {
+    html += '<br>' + i;
+  }
+  gutterEl.innerHTML = html;
 }
 
 codeEl.addEventListener('input', updateGutter);
