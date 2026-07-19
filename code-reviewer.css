@@ -453,3 +453,15 @@ hr.sep {
 }
 
 strong { color: var(--text); }
+
+/* Visually delightful and accessible focus indicators */
+button:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+#code-input:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
