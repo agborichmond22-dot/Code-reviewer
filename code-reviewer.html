@@ -10,11 +10,11 @@
 
 <header>
   <div class="logo">
-    <div class="logo-mark">&lt;/&gt;</div>
+    <div class="logo-mark" aria-hidden="true">&lt;/&gt;</div>
     CodeCheck
   </div>
   <div class="header-right">
-    <select id="lang">
+    <select id="lang" aria-label="Select Programming Language">
       <option value="javascript">JavaScript</option>
       <option value="typescript">TypeScript</option>
       <option value="python">Python</option>
@@ -48,8 +48,9 @@
       </div>
     </div>
     <div class="editor-wrap">
-      <div class="line-gutter" id="gutter"></div>
+      <div class="line-gutter" id="gutter" aria-hidden="true"></div>
       <textarea id="code-input" spellcheck="false" autocorrect="off" autocomplete="off"
+        aria-label="Code Input Area"
         placeholder="// Paste your code here&#10;// or click Example to load a sample&#10;// then hit Analyze (or Ctrl + Enter)"></textarea>
     </div>
   </div>
@@ -63,9 +64,9 @@
         <button class="btn-sm" id="copy-rev" onclick="copyReview()" style="display:none">Copy review</button>
       </div>
     </div>
-    <div class="output-body" id="output">
+    <div class="output-body" id="output" aria-live="polite">
       <div class="idle">
-        <div class="idle-icon">&lt;/&gt;</div>
+        <div class="idle-icon" aria-hidden="true">&lt;/&gt;</div>
         <h3>Ready to review</h3>
         <p>Paste code on the left and click Analyze</p>
         <p style="margin-top:5px">or press <kbd>Ctrl+Enter</kbd></p>
@@ -74,7 +75,7 @@
   </div>
 </main>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="code-reviewer.js"></script>
 </body>
