@@ -12,10 +12,33 @@ let fullReview = '';
 let toastTimer;
 
 // ── LINE NUMBERS ───────────────────────────────────
+let lastLineCount = 0;
+
 function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+  const val = codeEl.value;
+
+  // Performance optimization: allocation-free line count search instead of split('\n')
+  let lines = 1;
+  let pos = 0;
+  while ((pos = val.indexOf('\n', pos)) !== -1) {
+    lines++;
+    pos++;
+  }
+
+  // Performance optimization: Skip DOM updates if the line count hasn't changed
+  if (lines === lastLineCount) {
+    return;
+  }
+  lastLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
-  gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
+
+  // Performance optimization: Reuse a pre-allocated array instead of recreating from scratch or mapping
+  const gutterNums = new Array(lines);
+  for (let i = 0; i < lines; i++) {
+    gutterNums[i] = i + 1;
+  }
+  gutterEl.innerHTML = gutterNums.join('<br>');
 }
 
 codeEl.addEventListener('input', updateGutter);
