@@ -1,15 +1,24 @@
 // ── DOM refs ───────────────────────────────────────
-const codeEl    = document.getElementById('code-input');
-const outputEl  = document.getElementById('output');
-const gutterEl  = document.getElementById('gutter');
-const lineCount = document.getElementById('line-count');
-const runBtn    = document.getElementById('run-btn');
-const modelPill = document.getElementById('model-pill');
-const copyRev   = document.getElementById('copy-rev');
-const toastEl   = document.getElementById('toast');
+const codeEl     = document.getElementById('code-input');
+const outputEl   = document.getElementById('output');
+const gutterEl   = document.getElementById('gutter');
+const lineCount  = document.getElementById('line-count');
+const runBtn     = document.getElementById('run-btn');
+const modelPill  = document.getElementById('model-pill');
+const copyRev    = document.getElementById('copy-rev');
+const toastEl    = document.getElementById('toast');
+const apiKeyInput = document.getElementById('api-key-input');
 
 let fullReview = '';
 let toastTimer;
+
+// Load API key from localStorage
+if (apiKeyInput) {
+  apiKeyInput.value = localStorage.getItem('anthropic_api_key') || '';
+  apiKeyInput.addEventListener('input', () => {
+    localStorage.setItem('anthropic_api_key', apiKeyInput.value.trim());
+  });
+}
 
 // ── LINE NUMBERS ───────────────────────────────────
 function updateGutter() {
@@ -394,12 +403,30 @@ async function analyze() {
   copyRev.style.display   = 'none';
   showLoading();
 
+  const apiKey = apiKeyInput ? apiKeyInput.value.trim() : '';
+  if (!apiKey) {
+    toast('Please enter your Anthropic API Key first!');
+    showError('Anthropic API Key is missing. Please enter your API Key in the top right header field to proceed.');
+    runBtn.disabled = false;
+    runBtn.innerHTML = `
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M5 3l14 9-14 9V3z"/>
+      </svg>
+      Analyze`;
+    return;
+  }
+
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: 'claude-3-5-sonnet-20241022',
         max_tokens: 1000,
         stream: true,
         system: buildPrompt(lang),
