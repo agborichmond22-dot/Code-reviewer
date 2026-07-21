@@ -14,7 +14,7 @@
     CodeCheck
   </div>
   <div class="header-right">
-    <select id="lang">
+    <select id="lang" aria-label="Programming language">
       <option value="javascript">JavaScript</option>
       <option value="typescript">TypeScript</option>
       <option value="python">Python</option>
@@ -43,8 +43,8 @@
       <span class="pane-label" id="line-count">1 line</span>
       <div class="pane-btns">
         <button class="btn-sm" onclick="loadExample()">Example</button>
-        <button class="btn-sm" onclick="clearAll()">Clear</button>
-        <button class="btn-sm" onclick="copyCode()">Copy</button>
+        <button class="btn-sm" id="btn-clear" onclick="clearAll()">Clear</button>
+        <button class="btn-sm" id="btn-copy" onclick="copyCode()">Copy</button>
       </div>
     </div>
     <div class="editor-wrap">
