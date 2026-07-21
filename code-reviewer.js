@@ -12,8 +12,24 @@ let fullReview = '';
 let toastTimer;
 
 // ── LINE NUMBERS ───────────────────────────────────
+let cachedLines = -1;
+
 function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+  const val = codeEl.value;
+  // Performance Optimization: Use regex newline counting to avoid allocating a large array of substrings via split()
+  let lines = 1;
+  const match = val.match(/\n/g);
+  if (match) {
+    lines = match.length + 1;
+  }
+
+  // Performance Optimization: Skip expensive DOM manipulation, HTML rendering, and reflows if the line count hasn't changed.
+  // This makes regular character typing (which is the most frequent user action) take O(1) time without any layout recalculation.
+  if (lines === cachedLines) {
+    return;
+  }
+  cachedLines = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
   gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
 }
