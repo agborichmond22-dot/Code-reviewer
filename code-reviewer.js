@@ -10,10 +10,18 @@ const toastEl   = document.getElementById('toast');
 
 let fullReview = '';
 let toastTimer;
+let lastLineCount = 0; // Cache to prevent redundant DOM updates while typing
 
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
+// Optimized: Avoid expensive array allocation, joining, and DOM thrashing
+// by only rewriting the DOM when the line count actually changes.
+function updateGutter(force = false) {
   const lines = codeEl.value.split('\n').length;
+  // Note: Event listener callbacks pass the Event object as the first argument,
+  // which is truthy. We check for strict boolean true to avoid bypassing the cache.
+  if (force !== true && lines === lastLineCount) return;
+  lastLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
   gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
 }
