@@ -471,5 +471,16 @@ async function analyze() {
 }
 
 
+// Dynamic shortcut hint based on user operating system
+function initShortcutHint() {
+  const platform = (navigator.userAgentData?.platform || navigator.platform || '').toUpperCase();
+  const isMac = platform.includes('MAC') || platform.includes('IPHONE') || platform.includes('IPAD');
+  const hintEl = document.getElementById('shortcut-hint');
+  if (hintEl && isMac) {
+    hintEl.textContent = '⌘+Enter';
+  }
+}
+
 updateGutter();
 loadExample();
+initShortcutHint();
