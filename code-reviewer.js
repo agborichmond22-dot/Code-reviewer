@@ -12,10 +12,34 @@ let fullReview = '';
 let toastTimer;
 
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+let lastLineCount = 0;
+
+// Optimized updateGutter to minimize DOM manipulation, layouts, and allocations
+function updateGutter(force) {
+  const val = codeEl.value;
+  let lines = 1;
+  let pos = 0;
+  // Efficiently count newlines without string/array allocations
+  while ((pos = val.indexOf('\n', pos)) !== -1) {
+    lines++;
+    pos++;
+  }
+
+  // Early return if line count is unchanged to avoid costly DOM updates and layout reflows.
+  // Explicitly check force === true to avoid event arguments overriding the default.
+  if (lines === lastLineCount && force !== true) {
+    return;
+  }
+  lastLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
-  gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
+
+  // Build gutter HTML via simple string concatenation instead of costly Array.from() / .join()
+  let html = '';
+  for (let i = 1; i <= lines; i++) {
+    html += i + '<br>';
+  }
+  gutterEl.innerHTML = html;
 }
 
 codeEl.addEventListener('input', updateGutter);
@@ -32,7 +56,7 @@ codeEl.addEventListener('keydown', e => {
     const s = codeEl.selectionStart;
     codeEl.value = codeEl.value.slice(0, s) + '  ' + codeEl.value.slice(codeEl.selectionEnd);
     codeEl.selectionStart = codeEl.selectionEnd = s + 2;
-    updateGutter();
+    updateGutter(true);
   }
   // Ctrl/Cmd+Enter to run
   if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
@@ -130,12 +154,12 @@ class AuthService {
 function loadExample() {
   const lang = document.getElementById('lang').value;
   codeEl.value = EXAMPLES[lang] || EXAMPLES.javascript;
-  updateGutter();
+  updateGutter(true);
 }
 
 function clearAll() {
   codeEl.value = '';
-  updateGutter();
+  updateGutter(true);
   showIdle();
 }
 
@@ -471,5 +495,5 @@ async function analyze() {
 }
 
 
-updateGutter();
+updateGutter(true);
 loadExample();
