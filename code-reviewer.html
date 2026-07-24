@@ -14,7 +14,7 @@
     CodeCheck
   </div>
   <div class="header-right">
-    <select id="lang">
+    <select id="lang" aria-label="Programming language selector">
       <option value="javascript">JavaScript</option>
       <option value="typescript">TypeScript</option>
       <option value="python">Python</option>
@@ -49,7 +49,7 @@
     </div>
     <div class="editor-wrap">
       <div class="line-gutter" id="gutter"></div>
-      <textarea id="code-input" spellcheck="false" autocorrect="off" autocomplete="off"
+      <textarea id="code-input" aria-label="Source code input editor" spellcheck="false" autocorrect="off" autocomplete="off"
         placeholder="// Paste your code here&#10;// or click Example to load a sample&#10;// then hit Analyze (or Ctrl + Enter)"></textarea>
     </div>
   </div>
@@ -68,7 +68,7 @@
         <div class="idle-icon">&lt;/&gt;</div>
         <h3>Ready to review</h3>
         <p>Paste code on the left and click Analyze</p>
-        <p style="margin-top:5px">or press <kbd>Ctrl+Enter</kbd></p>
+        <p style="margin-top:5px">or press <kbd id="shortcut-hint">Ctrl+Enter</kbd></p>
       </div>
     </div>
   </div>

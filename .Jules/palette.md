@@ -1,0 +1,5 @@
+# Palette's Journal - UX & Accessibility Learnings
+
+## 2026-07-24 - OS-Specific Keyboard Shortcuts and Focus Visibility in Static Sandboxes
+**Learning:** Hardcoded keyboard shortcut descriptions (e.g., "Ctrl+Enter") ignore macOS platform conventions and create cognitive friction for Mac users. Dynamically checking the user's platform via `navigator.platform` (or modern `navigator.userAgentData.platform`) and updating key symbols (like "⌘+Enter") aligns the interface with system-level user expectations. Additionally, removing native focus rings via `outline: none;` without providing custom `:focus-visible` styles entirely breaks keyboard navigation accessibility for screen reader/non-pointer users. Using inset box shadows for the code editor area avoids layout shifts.
+**Action:** Always inspect platforms dynamically when detailing keyboard shortcuts. Avoid hardcoding standard OS keys, and always provide customized `:focus-visible` outlines matching the color palette when native outlines are suppressed.
