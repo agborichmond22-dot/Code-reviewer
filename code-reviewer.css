@@ -154,9 +154,24 @@ main {
   transition: all 0.15s;
 }
 
-.btn-sm:hover {
+.btn-sm:hover:not(:disabled) {
   color: var(--text);
   border-color: var(--text-md);
+}
+
+.btn-sm:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Accessible focus outline for keyboard users navigation */
+select:focus-visible,
+#code-input:focus-visible,
+.btn-run:focus-visible,
+.btn-sm:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .claude-badge {
