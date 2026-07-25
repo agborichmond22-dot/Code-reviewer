@@ -12,10 +12,33 @@ let fullReview = '';
 let toastTimer;
 
 // ── LINE NUMBERS ───────────────────────────────────
+// Cache last rendered line count to skip redundant DOM updates
+let lastLineCount = -1;
+
 function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+  const text = codeEl.value;
+  // Calculate line count efficiently (O(n) time, O(1) space with no array allocation)
+  let lines = 1;
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === '\n') {
+      lines++;
+    }
+  }
+
+  // Skip redundant DOM writes and string operations if line count has not changed
+  if (lines === lastLineCount) {
+    return;
+  }
+  lastLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
-  gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
+
+  // Build the line numbers HTML using a fast loop (avoiding massive array allocation/joining)
+  let gutterHtml = '';
+  for (let i = 1; i <= lines; i++) {
+    gutterHtml += i + '<br>';
+  }
+  gutterEl.innerHTML = gutterHtml;
 }
 
 codeEl.addEventListener('input', updateGutter);
