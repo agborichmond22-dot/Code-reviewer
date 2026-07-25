@@ -7,6 +7,8 @@ const runBtn    = document.getElementById('run-btn');
 const modelPill = document.getElementById('model-pill');
 const copyRev   = document.getElementById('copy-rev');
 const toastEl   = document.getElementById('toast');
+const clearBtn  = document.getElementById('clear-btn');
+const copyBtn   = document.getElementById('copy-btn');
 
 let fullReview = '';
 let toastTimer;
@@ -16,6 +18,10 @@ function updateGutter() {
   const lines = codeEl.value.split('\n').length;
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
   gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
+
+  const hasContent = !!codeEl.value.trim();
+  if (clearBtn) clearBtn.disabled = !hasContent;
+  if (copyBtn) copyBtn.disabled = !hasContent;
 }
 
 codeEl.addEventListener('input', updateGutter);
