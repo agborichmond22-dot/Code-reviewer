@@ -1,0 +1,3 @@
+## 2024-07-25 - Caching Gutter Render & Fast Line Counting in JavaScript Text Editor
+**Learning:** In a web-based text editor, running split/join and DOM updates on every keystroke in the textarea causes a highly noticeable latency bottleneck, especially on larger files. By caching the previous line count and comparing it using primitive values, we can skip DOM updates entirely on most keystrokes (since most typing happens on the same line). Furthermore, avoiding `.split('\n')` and `Array.from()` allocations by counting newlines inside a fast O(N) loop reduces garbage collection pressure significantly.
+**Action:** Always cache state and use O(N) loops/primitive caching to prevent expensive DOM redraws on rapid keyboard/typing input handlers in textareas.
