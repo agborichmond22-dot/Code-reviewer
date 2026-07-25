@@ -1,0 +1,4 @@
+## 2026-07-25 - [Secure Client-Side API Key Configuration]
+**Vulnerability:** Client-side static configuration or hardcoding of Anthropic API keys can result in credential exposure. Direct client-side requests using standard keys also fail or expose keys unless configured securely.
+**Learning:** For a static frontend web app, the user needs to supply their own key. Storing it securely in localStorage and masking input using type="password" prevents physical shoulder surfing and persistent server-side leak. Furthermore, Anthropic requires `anthropic-dangerous-direct-browser-access: true` for direct browser requests.
+**Prevention:** Avoid hardcoding any secrets, let the user enter their credential, mask the input element, store the value locally in the browser's `localStorage` under `anthropic_api_key`, and apply the explicit direct access headers on fetch.
