@@ -7,13 +7,48 @@ const runBtn    = document.getElementById('run-btn');
 const modelPill = document.getElementById('model-pill');
 const copyRev   = document.getElementById('copy-rev');
 const toastEl   = document.getElementById('toast');
+const apiKeyInput = document.getElementById('api-key-input');
 
 let fullReview = '';
 let toastTimer;
 
+// Load saved API Key from localStorage securely
+if (apiKeyInput) {
+  try {
+    apiKeyInput.value = localStorage.getItem('anthropic_api_key') || '';
+    apiKeyInput.addEventListener('input', () => {
+      try {
+        localStorage.setItem('anthropic_api_key', apiKeyInput.value.trim());
+      } catch (e) {
+        console.warn('Failed to save API key to localStorage:', e);
+      }
+    });
+  } catch (e) {
+    console.warn('Failed to load API key from localStorage:', e);
+  }
+}
+
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+let cachedLineCount = 0;
+
+function updateGutter(force = false) {
+  const text = codeEl.value;
+  // Efficiently count lines without allocating a huge array via split()
+  let lines = 1;
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === '\n') {
+      lines++;
+    }
+  }
+
+  // Perform an O(1) early return if the line count hasn't changed,
+  // unless we specifically force a redraw. Strictly check force === true
+  // because event listeners pass an Event object as the first parameter.
+  if (lines === cachedLineCount && force !== true) {
+    return;
+  }
+  cachedLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
   gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
 }
@@ -32,7 +67,7 @@ codeEl.addEventListener('keydown', e => {
     const s = codeEl.selectionStart;
     codeEl.value = codeEl.value.slice(0, s) + '  ' + codeEl.value.slice(codeEl.selectionEnd);
     codeEl.selectionStart = codeEl.selectionEnd = s + 2;
-    updateGutter();
+    updateGutter(true);
   }
   // Ctrl/Cmd+Enter to run
   if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
@@ -130,12 +165,12 @@ class AuthService {
 function loadExample() {
   const lang = document.getElementById('lang').value;
   codeEl.value = EXAMPLES[lang] || EXAMPLES.javascript;
-  updateGutter();
+  updateGutter(true);
 }
 
 function clearAll() {
   codeEl.value = '';
-  updateGutter();
+  updateGutter(true);
   showIdle();
 }
 
@@ -380,6 +415,13 @@ async function analyze() {
   const code = codeEl.value.trim();
   if (!code) { toast('Paste some code first!'); return; }
 
+  const apiKey = apiKeyInput ? apiKeyInput.value.trim() : '';
+  if (!apiKey) {
+    toast('API Key is required!');
+    showError('Anthropic API Key is missing. Please enter your API Key in the top-right header field to proceed.');
+    return;
+  }
+
   const lang = document.getElementById('lang').value;
 
   // Update button state
@@ -397,7 +439,12 @@ async function analyze() {
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
         max_tokens: 1000,
