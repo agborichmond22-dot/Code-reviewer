@@ -12,8 +12,26 @@ let fullReview = '';
 let toastTimer;
 
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+let cachedLineCount = 0;
+
+function updateGutter(force = false) {
+  const text = codeEl.value;
+  // Efficiently count lines without allocating a huge array via split()
+  let lines = 1;
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === '\n') {
+      lines++;
+    }
+  }
+
+  // Perform an O(1) early return if the line count hasn't changed,
+  // unless we specifically force a redraw. Strictly check force === true
+  // because event listeners pass an Event object as the first parameter.
+  if (lines === cachedLineCount && force !== true) {
+    return;
+  }
+  cachedLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
   gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
 }
@@ -32,7 +50,7 @@ codeEl.addEventListener('keydown', e => {
     const s = codeEl.selectionStart;
     codeEl.value = codeEl.value.slice(0, s) + '  ' + codeEl.value.slice(codeEl.selectionEnd);
     codeEl.selectionStart = codeEl.selectionEnd = s + 2;
-    updateGutter();
+    updateGutter(true);
   }
   // Ctrl/Cmd+Enter to run
   if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
@@ -130,12 +148,12 @@ class AuthService {
 function loadExample() {
   const lang = document.getElementById('lang').value;
   codeEl.value = EXAMPLES[lang] || EXAMPLES.javascript;
-  updateGutter();
+  updateGutter(true);
 }
 
 function clearAll() {
   codeEl.value = '';
-  updateGutter();
+  updateGutter(true);
   showIdle();
 }
 
