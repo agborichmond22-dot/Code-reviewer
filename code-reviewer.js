@@ -1,15 +1,37 @@
 // ── DOM refs ───────────────────────────────────────
-const codeEl    = document.getElementById('code-input');
-const outputEl  = document.getElementById('output');
-const gutterEl  = document.getElementById('gutter');
-const lineCount = document.getElementById('line-count');
-const runBtn    = document.getElementById('run-btn');
-const modelPill = document.getElementById('model-pill');
-const copyRev   = document.getElementById('copy-rev');
-const toastEl   = document.getElementById('toast');
+const codeEl     = document.getElementById('code-input');
+const outputEl   = document.getElementById('output');
+const gutterEl   = document.getElementById('gutter');
+const lineCount  = document.getElementById('line-count');
+const runBtn     = document.getElementById('run-btn');
+const modelPill  = document.getElementById('model-pill');
+const copyRev    = document.getElementById('copy-rev');
+const toastEl    = document.getElementById('toast');
+const apiKeyInput = document.getElementById('api-key-input');
 
 let fullReview = '';
 let toastTimer;
+
+// Load API key from localStorage safely
+try {
+  const savedKey = localStorage.getItem('anthropic_api_key');
+  if (savedKey && apiKeyInput) {
+    apiKeyInput.value = savedKey;
+  }
+} catch (e) {
+  console.warn('localStorage is disabled or inaccessible:', e);
+}
+
+// Save API key on input change safely
+if (apiKeyInput) {
+  apiKeyInput.addEventListener('input', () => {
+    try {
+      localStorage.setItem('anthropic_api_key', apiKeyInput.value.trim());
+    } catch (e) {
+      console.warn('localStorage is disabled or inaccessible:', e);
+    }
+  });
+}
 
 // ── LINE NUMBERS ───────────────────────────────────
 function updateGutter() {
@@ -381,6 +403,7 @@ async function analyze() {
   if (!code) { toast('Paste some code first!'); return; }
 
   const lang = document.getElementById('lang').value;
+  const apiKey = apiKeyInput ? apiKeyInput.value.trim() : '';
 
   // Update button state
   runBtn.disabled = true;
@@ -395,9 +418,18 @@ async function analyze() {
   showLoading();
 
   try {
+    if (!apiKey) {
+      throw new Error('Please enter your Anthropic API Key.');
+    }
+
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
         max_tokens: 1000,
