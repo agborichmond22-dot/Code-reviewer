@@ -10,11 +10,11 @@
 
 <header>
   <div class="logo">
-    <div class="logo-mark">&lt;/&gt;</div>
+    <div class="logo-mark" aria-hidden="true">&lt;/&gt;</div>
     CodeCheck
   </div>
   <div class="header-right">
-    <select id="lang">
+    <select id="lang" aria-label="Programming language">
       <option value="javascript">JavaScript</option>
       <option value="typescript">TypeScript</option>
       <option value="python">Python</option>
@@ -28,7 +28,7 @@
       <option value="csharp">C#</option>
     </select>
     <button class="btn-run" id="run-btn" onclick="analyze()">
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M5 3l14 9-14 9V3z"/>
       </svg>
       Analyze
@@ -74,7 +74,7 @@
   </div>
 </main>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="code-reviewer.js"></script>
 </body>
