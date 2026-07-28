@@ -1,0 +1,4 @@
+## 2026-07-28 - Secure Client-Side Anthropic Claude API Key Integration
+**Vulnerability:** API key exposure risks and unhandled localStorage DOMException risks.
+**Learning:** Direct client-side integration with external LLMs (such as Anthropic Claude) requires a secure, user-supplied, password-masked input rather than hardcoded environment variables or build artifacts. Furthermore, accessing `localStorage` directly in diverse browser contexts (e.g. nested frames, custom sandbox environments) can throw DOMExceptions unless fully wrapped in robust try/catch blocks.
+**Prevention:** Mask all sensitive credential input elements using `type="password"`. Access browser storage APIs safely within try/catch blocks, and validate all inputs before initiating fetch requests to avoid API payload errors. Include required direct browser access headers `anthropic-dangerous-direct-browser-access: true` with standard versioning.

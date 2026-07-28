@@ -7,9 +7,31 @@ const runBtn    = document.getElementById('run-btn');
 const modelPill = document.getElementById('model-pill');
 const copyRev   = document.getElementById('copy-rev');
 const toastEl   = document.getElementById('toast');
+const apiKeyEl  = document.getElementById('api-key-input');
 
 let fullReview = '';
 let toastTimer;
+
+// Load API key securely on init
+try {
+  const savedKey = localStorage.getItem('anthropic_api_key');
+  if (savedKey && apiKeyEl) {
+    apiKeyEl.value = savedKey;
+  }
+} catch (e) {
+  console.warn('localStorage is disabled or inaccessible:', e);
+}
+
+// Auto-save key when user types
+if (apiKeyEl) {
+  apiKeyEl.addEventListener('input', () => {
+    try {
+      localStorage.setItem('anthropic_api_key', apiKeyEl.value.trim());
+    } catch (e) {
+      console.warn('localStorage is disabled or inaccessible:', e);
+    }
+  });
+}
 
 // ── LINE NUMBERS ───────────────────────────────────
 function updateGutter() {
@@ -395,11 +417,28 @@ async function analyze() {
   showLoading();
 
   try {
+    let apiKey = (apiKeyEl ? apiKeyEl.value.trim() : '');
+    if (!apiKey) {
+      try {
+        apiKey = localStorage.getItem('anthropic_api_key') || '';
+      } catch (e) {
+        console.warn('localStorage is disabled or inaccessible:', e);
+      }
+    }
+    if (!apiKey) {
+      throw new Error('Anthropic API Key is required. Please enter your key in the header input.');
+    }
+
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: 'claude-3-5-sonnet-20240620',
         max_tokens: 1000,
         stream: true,
         system: buildPrompt(lang),
