@@ -1,0 +1,4 @@
+## 2024-07-29 - [Secure Browser-Based API Direct Calls and Key Injection Prevention]
+**Vulnerability:** Client-side credentials leakage and lack of user-input credential handling. Hardcoding or storing keys insecurely can compromise third-party APIs.
+**Learning:** The application was initially written to call the Anthropic API directly from the browser, which requires headers like `x-api-key` and `anthropic-dangerous-direct-browser-access: true`. Without a masked, persistent user input field, developers might be tempted to hardcode their keys directly in the script, exposing them in git history and public repositories.
+**Prevention:** Always provide a password-masked credentials input field for third-party API keys, persist securely using `try/catch`-wrapped `localStorage` to avoid DOMExceptions in restricted environments, and never hardcode secrets.
