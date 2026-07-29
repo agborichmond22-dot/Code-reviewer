@@ -11,9 +11,32 @@ const toastEl   = document.getElementById('toast');
 let fullReview = '';
 let toastTimer;
 
+let cachedLineCount = 0;
+
+// O(N) line-counting algorithm avoiding array allocation from split('\n')
+function countLines(str) {
+  let count = 1;
+  let pos = 0;
+  while ((pos = str.indexOf('\n', pos)) !== -1) {
+    count++;
+    pos++;
+  }
+  return count;
+}
+
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+function updateGutter(force = false) {
+  const text = codeEl.value;
+  const lines = countLines(text);
+
+  // O(1) early return to prevent unnecessary line count text updates and DOM updates.
+  // We use strict equality `force === true` to avoid issues with event listeners where
+  // the browser passes the implicit `Event` object as the first argument, overriding the default.
+  if (lines === cachedLineCount && force !== true) {
+    return;
+  }
+
+  cachedLineCount = lines;
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
   gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
 }
@@ -130,12 +153,13 @@ class AuthService {
 function loadExample() {
   const lang = document.getElementById('lang').value;
   codeEl.value = EXAMPLES[lang] || EXAMPLES.javascript;
-  updateGutter();
+  updateGutter(true);
 }
 
+// Clear input and output
 function clearAll() {
   codeEl.value = '';
-  updateGutter();
+  updateGutter(true);
   showIdle();
 }
 
@@ -471,5 +495,5 @@ async function analyze() {
 }
 
 
-updateGutter();
+updateGutter(true);
 loadExample();
