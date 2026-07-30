@@ -1,0 +1,3 @@
+## 2026-07-30 - Editor Gutter Typing Lag Optimization
+**Learning:** The text editor's input handler previously re-calculated the gutter line numbers on every keystroke using `split('\n')`. For large files, this O(N) operation allocated thousands of short-lived strings and arrays per second, triggering significant garbage collection and causing noticeable typing/input lag in the editor.
+**Action:** Implemented a fast string scanner using `indexOf` to count lines with zero object allocations, paired with an O(1) early return when the total line count remains unchanged. Always use strict checks (e.g., `force === true`) on custom parameter options in DOM event listeners to prevent browser event objects from overriding default arguments.
