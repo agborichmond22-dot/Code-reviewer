@@ -65,6 +65,27 @@ header {
   gap: 10px;
 }
 
+#api-key-input {
+  background: var(--bg3);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  outline: none;
+  width: 180px;
+}
+
+#api-key-input:hover {
+  border-color: var(--accent);
+}
+
+#api-key-input:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.3);
+}
+
 select {
   background: var(--bg3);
   color: var(--text);
