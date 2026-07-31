@@ -7,9 +7,33 @@ const runBtn    = document.getElementById('run-btn');
 const modelPill = document.getElementById('model-pill');
 const copyRev   = document.getElementById('copy-rev');
 const toastEl   = document.getElementById('toast');
+const apiKeyEl  = document.getElementById('api-key-input');
 
 let fullReview = '';
 let toastTimer;
+let anthropicApiKey = '';
+
+// Load initial API key from localStorage securely wrapped in try/catch
+try {
+  anthropicApiKey = localStorage.getItem('anthropic_api_key') || '';
+  if (apiKeyEl) {
+    apiKeyEl.value = anthropicApiKey;
+  }
+} catch (e) {
+  console.warn('localStorage is blocked or inaccessible.', e);
+}
+
+// Persist key change to localStorage securely wrapped in try/catch
+if (apiKeyEl) {
+  apiKeyEl.addEventListener('input', () => {
+    anthropicApiKey = apiKeyEl.value.trim();
+    try {
+      localStorage.setItem('anthropic_api_key', anthropicApiKey);
+    } catch (e) {
+      console.warn('Failed to persist API key to localStorage.', e);
+    }
+  });
+}
 
 // ── LINE NUMBERS ───────────────────────────────────
 function updateGutter() {
@@ -380,6 +404,11 @@ async function analyze() {
   const code = codeEl.value.trim();
   if (!code) { toast('Paste some code first!'); return; }
 
+  if (!anthropicApiKey) {
+    showError('Please enter an Anthropic API Key in the header input to run analysis.');
+    return;
+  }
+
   const lang = document.getElementById('lang').value;
 
   // Update button state
@@ -397,9 +426,14 @@ async function analyze() {
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': anthropicApiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: 'claude-3-5-sonnet-20241022',
         max_tokens: 1000,
         stream: true,
         system: buildPrompt(lang),
