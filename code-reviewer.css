@@ -453,3 +453,14 @@ hr.sep {
 }
 
 strong { color: var(--text); }
+
+/* Keyboard Accessibility - Visible Focus Indicators */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+#code-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px; /* Prevent clipping by overflow-hidden parent */
+}
