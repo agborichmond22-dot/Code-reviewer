@@ -1,0 +1,3 @@
+## 2024-08-01 - Avoid Array Allocation and DOM Rebuilds on Keystrokes
+**Learning:** In code editor textareas, running `.split('\n')` on every keystroke causes O(N) array allocation and subsequent garbage collection overhead. Furthermore, updating the gutter line numbers DOM (`gutterEl.innerHTML`) on every single keystroke triggers expensive browser reflows and repaints, even when the number of lines has not changed.
+**Action:** Implement O(1) early-return optimization by caching the previous line count. Use an efficient non-allocating method (like counting newline character indices) to find the line count, and only update the DOM when the line count actually changes.
