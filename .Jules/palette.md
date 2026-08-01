@@ -1,0 +1,3 @@
+## 2025-08-01 - [Dynamic Toasts and Focus Outlines]
+**Learning:** Dynamic notification element structures like floating toast components must always use explicit standard accessibility attributes (`role="status" aria-live="polite"`) to be reliably voiced by modern screen readers. Additionally, default focus styling can be clipped on inputs or containers with `overflow: hidden`, requiring negative outline offsets (such as `outline-offset: -2px`) with `:focus-visible` to guarantee visibility for keyboard navigators.
+**Action:** Always add standard status roles/aria-live to toasts, and style absolute/edge-to-edge inputs with inner focus rings or negative offsets.
