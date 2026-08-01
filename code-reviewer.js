@@ -11,14 +11,30 @@ const toastEl   = document.getElementById('toast');
 let fullReview = '';
 let toastTimer;
 
+let cachedLineCount = 0;
+
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+function updateGutter(force) {
+  const val = codeEl.value;
+  // O(1) memory: efficiently count line numbers without allocating arrays
+  let lines = 1;
+  let pos = 0;
+  while ((pos = val.indexOf('\n', pos)) !== -1) {
+    lines++;
+    pos++;
+  }
+
+  // Early return if line count hasn't changed to prevent expensive DOM/Layout updates
+  if (lines === cachedLineCount && force !== true) {
+    return;
+  }
+  cachedLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
   gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
 }
 
-codeEl.addEventListener('input', updateGutter);
+codeEl.addEventListener('input', () => updateGutter());
 
 // Sync gutter scroll to editor scroll
 codeEl.addEventListener('scroll', () => {
