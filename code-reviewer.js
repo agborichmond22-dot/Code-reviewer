@@ -12,13 +12,31 @@ let fullReview = '';
 let toastTimer;
 
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+let cachedLineCount = 0;
+
+// O(1) optimization: count lines using an allocation-free loop to prevent unnecessary GC
+// and avoid expensive layout thrashing/DOM updates when typing on the same line.
+function updateGutter(force) {
+  const isForced = force === true;
+  const val = codeEl.value;
+  let lines = 1;
+  let idx = val.indexOf('\n');
+  while (idx !== -1) {
+    lines++;
+    idx = val.indexOf('\n', idx + 1);
+  }
+
+  // Early return if line count is identical and full re-render is not forced
+  if (!isForced && lines === cachedLineCount) {
+    return;
+  }
+  cachedLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
   gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
 }
 
-codeEl.addEventListener('input', updateGutter);
+codeEl.addEventListener('input', () => updateGutter(false));
 
 // Sync gutter scroll to editor scroll
 codeEl.addEventListener('scroll', () => {
@@ -32,7 +50,7 @@ codeEl.addEventListener('keydown', e => {
     const s = codeEl.selectionStart;
     codeEl.value = codeEl.value.slice(0, s) + '  ' + codeEl.value.slice(codeEl.selectionEnd);
     codeEl.selectionStart = codeEl.selectionEnd = s + 2;
-    updateGutter();
+    updateGutter(true);
   }
   // Ctrl/Cmd+Enter to run
   if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
@@ -130,12 +148,12 @@ class AuthService {
 function loadExample() {
   const lang = document.getElementById('lang').value;
   codeEl.value = EXAMPLES[lang] || EXAMPLES.javascript;
-  updateGutter();
+  updateGutter(true);
 }
 
 function clearAll() {
   codeEl.value = '';
-  updateGutter();
+  updateGutter(true);
   showIdle();
 }
 
@@ -471,5 +489,5 @@ async function analyze() {
 }
 
 
-updateGutter();
+updateGutter(true);
 loadExample();
