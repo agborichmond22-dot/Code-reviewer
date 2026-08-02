@@ -14,7 +14,7 @@
     CodeCheck
   </div>
   <div class="header-right">
-    <select id="lang">
+    <select id="lang" aria-label="Select programming language">
       <option value="javascript">JavaScript</option>
       <option value="typescript">TypeScript</option>
       <option value="python">Python</option>
@@ -74,7 +74,7 @@
   </div>
 </main>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="code-reviewer.js"></script>
 </body>
