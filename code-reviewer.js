@@ -134,6 +134,10 @@ function loadExample() {
 }
 
 function clearAll() {
+  if (codeEl.value.trim()) {
+    const confirmClear = confirm('Are you sure you want to clear your code? This cannot be undone.');
+    if (!confirmClear) return;
+  }
   codeEl.value = '';
   updateGutter();
   showIdle();
