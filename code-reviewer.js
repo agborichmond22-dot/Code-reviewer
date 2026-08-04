@@ -128,12 +128,22 @@ class AuthService {
 };
 
 function loadExample() {
+  if (codeEl.value.trim() !== '') {
+    if (!confirm('Are you sure you want to overwrite your current code with an example?')) {
+      return;
+    }
+  }
   const lang = document.getElementById('lang').value;
   codeEl.value = EXAMPLES[lang] || EXAMPLES.javascript;
   updateGutter();
 }
 
 function clearAll() {
+  if (codeEl.value.trim() !== '') {
+    if (!confirm('Are you sure you want to clear your current code?')) {
+      return;
+    }
+  }
   codeEl.value = '';
   updateGutter();
   showIdle();
