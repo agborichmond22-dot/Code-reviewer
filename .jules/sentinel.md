@@ -1,0 +1,4 @@
+## 2025-08-04 - Secure Client-Side Anthropic API Key Storage and Masking
+**Vulnerability:** Client-side direct access to third-party LLM APIs previously was implemented without an API key storage mechanism or key input, making it unusable or requiring unsafe hardcoded credentials.
+**Learning:** For static client-side web apps, prompting users for their personal API keys, persisting them securely in password-masked input fields with `autocomplete="off"`/`spellcheck="false"`, and saving to/retrieving from `localStorage` inside robust `try/catch` error handlers is the safest approach to maintain defense-in-depth and avoid credential leaking.
+**Prevention:** Avoid hardcoded secrets at all costs. Provide UI configurations for API keys, make them password fields, and protect reads/writes to browser storage against security policy constraints or disabled cookie/storage environments.
