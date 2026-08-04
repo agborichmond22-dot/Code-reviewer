@@ -7,9 +7,29 @@ const runBtn    = document.getElementById('run-btn');
 const modelPill = document.getElementById('model-pill');
 const copyRev   = document.getElementById('copy-rev');
 const toastEl   = document.getElementById('toast');
+const apiKeyInput = document.getElementById('api-key-input');
 
 let fullReview = '';
 let toastTimer;
+
+// Load API Key from localStorage securely
+try {
+  const savedKey = localStorage.getItem('anthropic_api_key');
+  if (savedKey) {
+    apiKeyInput.value = savedKey;
+  }
+} catch (e) {
+  console.warn('localStorage is disabled or restricted:', e);
+}
+
+// Save API Key on input securely
+apiKeyInput.addEventListener('input', () => {
+  try {
+    localStorage.setItem('anthropic_api_key', apiKeyInput.value.trim());
+  } catch (e) {
+    console.warn('localStorage is disabled or restricted:', e);
+  }
+});
 
 // ── LINE NUMBERS ───────────────────────────────────
 function updateGutter() {
@@ -394,12 +414,30 @@ async function analyze() {
   copyRev.style.display   = 'none';
   showLoading();
 
+  const apiKey = apiKeyInput.value.trim();
+  if (!apiKey) {
+    toast('Please enter your Anthropic API Key!');
+    runBtn.disabled = false;
+    runBtn.innerHTML = `
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M5 3l14 9-14 9V3z"/>
+      </svg>
+      Analyze`;
+    showIdle();
+    return;
+  }
+
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: 'claude-3-5-sonnet-20241022',
         max_tokens: 1000,
         stream: true,
         system: buildPrompt(lang),
