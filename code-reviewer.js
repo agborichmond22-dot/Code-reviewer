@@ -12,8 +12,26 @@ let fullReview = '';
 let toastTimer;
 
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+// Cache line count to avoid redundant DOM updates and costly layout/paint thrashing.
+let cachedLineCount = 0;
+
+function updateGutter(force) {
+  const text = codeEl.value;
+  // Compute line count in O(N) time and O(1) space, avoiding expensive array allocations of split('\n').
+  let lines = 1;
+  let idx = text.indexOf('\n');
+  while (idx !== -1) {
+    lines++;
+    idx = text.indexOf('\n', idx + 1);
+  }
+
+  // Perform early O(1) return if the line count hasn't changed.
+  // Note: Check force strictly as a boolean to prevent implicit event objects (e.g. from event listeners) from overriding the default/argument.
+  if (force !== true && lines === cachedLineCount) {
+    return;
+  }
+
+  cachedLineCount = lines;
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
   gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
 }
@@ -130,12 +148,12 @@ class AuthService {
 function loadExample() {
   const lang = document.getElementById('lang').value;
   codeEl.value = EXAMPLES[lang] || EXAMPLES.javascript;
-  updateGutter();
+  updateGutter(true);
 }
 
 function clearAll() {
   codeEl.value = '';
-  updateGutter();
+  updateGutter(true);
   showIdle();
 }
 
@@ -471,5 +489,5 @@ async function analyze() {
 }
 
 
-updateGutter();
+updateGutter(true);
 loadExample();
