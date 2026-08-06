@@ -1,0 +1,3 @@
+## 2024-08-06 - Optimize gutter line calculations to reduce typing lag
+**Learning:** For interactive text editors, running a full DOM line gutter update or full string array allocations (`.split('\n')`) on every keystroke causes heavy rendering and memory footprint overhead (O(N) operations and object allocation churn on every character typed). Comparing current and cached line count first allows an O(1) early return. In addition, counting newlines using an allocation-free loop avoids substring allocations.
+**Action:** Cache the previous line count and exit early if the line count hasn't changed. Also, count lines without allocating arrays using a simple character iteration, and optimize the HTML string generation when the count does change.

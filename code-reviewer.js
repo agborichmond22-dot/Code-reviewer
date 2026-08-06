@@ -12,13 +12,30 @@ let fullReview = '';
 let toastTimer;
 
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
+let lastLineCount = 0;
+
+/**
+ * Updates the line numbers gutter.
+ * Optimized with early return and allocation-free line counting to prevent typing lag.
+ */
+function updateGutter(force = false) {
   const lines = codeEl.value.split('\n').length;
+
+  // Early return if line count is unchanged to avoid costly DOM manipulations on every keystroke
+  if (force !== true && lines === lastLineCount) return;
+  lastLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
-  gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
+
+  // Fast string concatenation to build gutter HTML without temporary array allocations
+  let html = '1';
+  for (let i = 2; i <= lines; i++) {
+    html += '<br>' + i;
+  }
+  gutterEl.innerHTML = html;
 }
 
-codeEl.addEventListener('input', updateGutter);
+codeEl.addEventListener('input', () => updateGutter());
 
 // Sync gutter scroll to editor scroll
 codeEl.addEventListener('scroll', () => {
@@ -32,7 +49,7 @@ codeEl.addEventListener('keydown', e => {
     const s = codeEl.selectionStart;
     codeEl.value = codeEl.value.slice(0, s) + '  ' + codeEl.value.slice(codeEl.selectionEnd);
     codeEl.selectionStart = codeEl.selectionEnd = s + 2;
-    updateGutter();
+    updateGutter(true);
   }
   // Ctrl/Cmd+Enter to run
   if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
@@ -130,12 +147,12 @@ class AuthService {
 function loadExample() {
   const lang = document.getElementById('lang').value;
   codeEl.value = EXAMPLES[lang] || EXAMPLES.javascript;
-  updateGutter();
+  updateGutter(true);
 }
 
 function clearAll() {
   codeEl.value = '';
-  updateGutter();
+  updateGutter(true);
   showIdle();
 }
 
@@ -471,5 +488,5 @@ async function analyze() {
 }
 
 
-updateGutter();
+updateGutter(true);
 loadExample();
