@@ -7,6 +7,7 @@ const runBtn    = document.getElementById('run-btn');
 const modelPill = document.getElementById('model-pill');
 const copyRev   = document.getElementById('copy-rev');
 const toastEl   = document.getElementById('toast');
+const apiKeyEl  = document.getElementById('api-key-input');
 
 let fullReview = '';
 let toastTimer;
@@ -380,6 +381,9 @@ async function analyze() {
   const code = codeEl.value.trim();
   if (!code) { toast('Paste some code first!'); return; }
 
+  const apiKey = apiKeyEl ? apiKeyEl.value.trim() : '';
+  if (!apiKey) { toast('Please enter your Anthropic API Key!'); return; }
+
   const lang = document.getElementById('lang').value;
 
   // Update button state
@@ -397,7 +401,12 @@ async function analyze() {
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
         max_tokens: 1000,
@@ -473,3 +482,23 @@ async function analyze() {
 
 updateGutter();
 loadExample();
+
+// Securely load and store the Anthropic API Key
+if (apiKeyEl) {
+  try {
+    const savedKey = localStorage.getItem('anthropic_api_key');
+    if (savedKey) {
+      apiKeyEl.value = savedKey;
+    }
+  } catch (e) {
+    console.warn('Unable to read API key from localStorage:', e);
+  }
+
+  apiKeyEl.addEventListener('input', () => {
+    try {
+      localStorage.setItem('anthropic_api_key', apiKeyEl.value.trim());
+    } catch (e) {
+      console.warn('Unable to write API key to localStorage:', e);
+    }
+  });
+}
