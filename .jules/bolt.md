@@ -1,0 +1,3 @@
+## 2025-08-09 - Line Gutter DOM Update and Array Allocation Optimization
+**Learning:** Running full DOM gutter line updates and `.split('\n')` array allocations on every single keystroke causes high garbage collection overhead and rendering/layout lag in custom text editors. Also, binding a default-parameter function directly to an event listener passes the Event object, which is truthy, overriding the default parameter.
+**Action:** Always count lines using a fast non-allocating character code scan loop first, compare with cached values for O(1) early-return, and strictly check parameters (`force === true`) if the function is registered as a direct event listener.
