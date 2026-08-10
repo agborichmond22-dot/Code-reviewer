@@ -82,6 +82,10 @@ select {
 }
 
 select:hover { border-color: var(--accent); }
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 
 .btn-run {
   display: flex;
@@ -100,6 +104,10 @@ select:hover { border-color: var(--accent); }
 }
 
 .btn-run:hover:not(:disabled) { filter: brightness(1.1); }
+.btn-run:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 .btn-run:disabled { opacity: 0.5; cursor: not-allowed; }
 
 main {
@@ -158,6 +166,10 @@ main {
   color: var(--text);
   border-color: var(--text-md);
 }
+.btn-sm:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 
 .claude-badge {
   font-size: 11px;
@@ -205,6 +217,10 @@ main {
   resize: none;
   outline: none;
   tab-size: 2;
+}
+#code-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
 }
 
 #code-input::placeholder { color: #484f58; }
