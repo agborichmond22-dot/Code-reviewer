@@ -12,8 +12,29 @@ let fullReview = '';
 let toastTimer;
 
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+let cachedLineCount = 0;
+
+// Optimized to prevent input lag on large documents.
+// Uses a fast character-scan loop instead of splitting the entire string on newlines,
+// and implements an O(1) early exit if the line count hasn't changed.
+function updateGutter(force = false) {
+  const val = codeEl.value;
+  let lines = 1;
+  const len = val.length;
+  for (let i = 0; i < len; i++) {
+    if (val[i] === '\n') {
+      lines++;
+    }
+  }
+
+  // Early return if line count hasn't changed, unless a force update is requested.
+  // Note: strict check for 'force === true' is necessary because when registered directly
+  // as an event listener, the browser passes the Event object, which is truthy.
+  if (lines === cachedLineCount && force !== true) {
+    return;
+  }
+  cachedLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
   gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
 }
