@@ -1,0 +1,3 @@
+## 2025-08-10 - Preventing Accidental Progress Loss in Code Editors
+**Learning:** Destructive UI actions such as clearing an editor or loading sample code over user-written text should always demand confirmation, but only if there is actual content in the editor. Unconditional prompts irritate users, while a complete lack of confirmation leads to frustration from accidental loss of progress.
+**Action:** Implement conditional check on editor content length/value prior to executing destructive actions like clearAll() or loadExample(). Ensure parameter overrides from implicit browser Event arguments are handled correctly so they do not bypass the check.
