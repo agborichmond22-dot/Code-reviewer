@@ -12,8 +12,30 @@ let fullReview = '';
 let toastTimer;
 
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+let cachedLineCount = 0;
+
+// Optimized updateGutter to prevent typing lag.
+// It avoids expensive DOM updates and array allocations on every keystroke by:
+// 1. Using a fast, allocation-free newline counting algorithm.
+// 2. Performing an O(1) early return if the line count hasn't changed.
+function updateGutter(force = false) {
+  const text = codeEl.value;
+  let lines = 1;
+  let pos = 0;
+  while ((pos = text.indexOf('\n', pos)) !== -1) {
+    lines++;
+    pos++;
+  }
+
+  // Early return if the line count is unchanged, unless force update is requested.
+  // Note: when registered as an event listener, the browser's implicit Event argument
+  // is passed as the first parameter. We strictly check force === true to avoid
+  // treating the Event object as a force flag.
+  if (force !== true && lines === cachedLineCount) {
+    return;
+  }
+
+  cachedLineCount = lines;
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
   gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
 }
@@ -32,7 +54,7 @@ codeEl.addEventListener('keydown', e => {
     const s = codeEl.selectionStart;
     codeEl.value = codeEl.value.slice(0, s) + '  ' + codeEl.value.slice(codeEl.selectionEnd);
     codeEl.selectionStart = codeEl.selectionEnd = s + 2;
-    updateGutter();
+    updateGutter(true);
   }
   // Ctrl/Cmd+Enter to run
   if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
@@ -130,12 +152,12 @@ class AuthService {
 function loadExample() {
   const lang = document.getElementById('lang').value;
   codeEl.value = EXAMPLES[lang] || EXAMPLES.javascript;
-  updateGutter();
+  updateGutter(true);
 }
 
 function clearAll() {
   codeEl.value = '';
-  updateGutter();
+  updateGutter(true);
   showIdle();
 }
 
