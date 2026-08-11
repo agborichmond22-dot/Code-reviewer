@@ -1,0 +1,3 @@
+## 2026-08-11 - Destructive Actions Confirmation
+**Learning:** Destructive UX actions (like clearing an editor or loading sample code) must conditionally ask for user confirmation if there is existing content, to prevent accidental loss of user progress. Furthermore, when registering default parameters (e.g., `force = false`) directly to event handlers, the browser's implicit `Event` argument can override the default parameter making it truthy, so strict parameter comparison should be used instead.
+**Action:** Always check default boolean parameters strictly (e.g., `param !== true` instead of `!param`) when registering functions as event listeners, and guard destructive interface operations with interactive `confirm()` calls only when non-empty user state exists.

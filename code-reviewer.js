@@ -127,13 +127,23 @@ class AuthService {
 }`
 };
 
-function loadExample() {
+function loadExample(force) {
+  if (force !== true && codeEl.value.trim()) {
+    if (!confirm('Are you sure you want to load example code? Your current edits will be lost.')) {
+      return;
+    }
+  }
   const lang = document.getElementById('lang').value;
   codeEl.value = EXAMPLES[lang] || EXAMPLES.javascript;
   updateGutter();
 }
 
-function clearAll() {
+function clearAll(force) {
+  if (force !== true && codeEl.value.trim()) {
+    if (!confirm('Are you sure you want to clear the editor? Your current edits will be lost.')) {
+      return;
+    }
+  }
   codeEl.value = '';
   updateGutter();
   showIdle();
@@ -472,4 +482,4 @@ async function analyze() {
 
 
 updateGutter();
-loadExample();
+loadExample(true);
