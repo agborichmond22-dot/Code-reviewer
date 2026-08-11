@@ -7,9 +7,31 @@ const runBtn    = document.getElementById('run-btn');
 const modelPill = document.getElementById('model-pill');
 const copyRev   = document.getElementById('copy-rev');
 const toastEl   = document.getElementById('toast');
+const apiKeyEl  = document.getElementById('api-key-input');
 
 let fullReview = '';
 let toastTimer;
+
+// Load API key from localStorage safely
+try {
+  const storedKey = localStorage.getItem('anthropic_api_key');
+  if (storedKey && apiKeyEl) {
+    apiKeyEl.value = storedKey;
+  }
+} catch (e) {
+  console.warn('Unable to access localStorage:', e);
+}
+
+// Save API key on input change safely
+if (apiKeyEl) {
+  apiKeyEl.addEventListener('change', () => {
+    try {
+      localStorage.setItem('anthropic_api_key', apiKeyEl.value);
+    } catch (e) {
+      console.warn('Unable to save to localStorage:', e);
+    }
+  });
+}
 
 // ── LINE NUMBERS ───────────────────────────────────
 function updateGutter() {
@@ -380,6 +402,12 @@ async function analyze() {
   const code = codeEl.value.trim();
   if (!code) { toast('Paste some code first!'); return; }
 
+  const apiKey = apiKeyEl ? apiKeyEl.value.trim() : '';
+  if (!apiKey) {
+    toast('Please enter your Anthropic API Key first!');
+    return;
+  }
+
   const lang = document.getElementById('lang').value;
 
   // Update button state
@@ -397,9 +425,14 @@ async function analyze() {
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: 'claude-3-5-sonnet-20241022',
         max_tokens: 1000,
         stream: true,
         system: buildPrompt(lang),
