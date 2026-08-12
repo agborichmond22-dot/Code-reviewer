@@ -127,13 +127,23 @@ class AuthService {
 }`
 };
 
-function loadExample() {
+function loadExample(force = false) {
+  if (codeEl.value.trim() && force !== true) {
+    if (!confirm('Are you sure you want to load an example? This will overwrite your current code.')) {
+      return;
+    }
+  }
   const lang = document.getElementById('lang').value;
   codeEl.value = EXAMPLES[lang] || EXAMPLES.javascript;
   updateGutter();
 }
 
-function clearAll() {
+function clearAll(force = false) {
+  if (codeEl.value.trim() && force !== true) {
+    if (!confirm('Are you sure you want to clear your code? This will discard your current progress.')) {
+      return;
+    }
+  }
   codeEl.value = '';
   updateGutter();
   showIdle();
