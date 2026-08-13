@@ -1,0 +1,3 @@
+## 2025-08-13 - Prevent Unintentional Code Loss on Destructive Editor Actions
+**Learning:** Destructive actions such as clearing the editor or loading an example can result in accidental loss of user-written code if executed without prompt confirmation. When registering functions with default parameters directly as JS event listeners, the browser's implicit `Event` argument overrides the default, making any parameter truthy.
+**Action:** Use a confirmation prompt (`confirm()`) conditionally if the editor has non-empty content. Perform strict checks (e.g., check that a bypass/force parameter is strictly `true` and not an implicit truthy event object) to prevent event handler bugs.
