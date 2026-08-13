@@ -1,0 +1,4 @@
+## 2026-08-13 - Secure Client-Side API Key Management and Direct Browser Headers
+**Vulnerability:** Hardcoded API keys or unauthenticated client-side requests in static web applications. Direct backend calls were attempted without any API key authentication input field.
+**Learning:** Purely client-side applications calling third-party services (e.g. Anthropic Claude API) must never hardcode API keys. Instead, they must securely retrieve keys dynamically from the user via password-masked inputs and persist them safely using browser storage with proper error handling.
+**Prevention:** Implement password-masked inputs with `autocomplete="off"` and `spellcheck="false"` to prevent exposure, and wrap `localStorage` access in try/catch blocks to ensure robust operation in restricted or disabled storage environments.
