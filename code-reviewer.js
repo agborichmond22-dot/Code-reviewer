@@ -12,8 +12,23 @@ let fullReview = '';
 let toastTimer;
 
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+let cachedLineCount = 0;
+
+function updateGutter(force = false) {
+  const val = codeEl.value;
+  let lines = 1;
+  let pos = 0;
+  while ((pos = val.indexOf('\n', pos)) !== -1) {
+    lines++;
+    pos++;
+  }
+
+  // Early return if line count is unchanged and force flag is not strictly true
+  if (lines === cachedLineCount && force !== true) {
+    return;
+  }
+  cachedLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
   gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
 }
@@ -130,12 +145,12 @@ class AuthService {
 function loadExample() {
   const lang = document.getElementById('lang').value;
   codeEl.value = EXAMPLES[lang] || EXAMPLES.javascript;
-  updateGutter();
+  updateGutter(true);
 }
 
 function clearAll() {
   codeEl.value = '';
-  updateGutter();
+  updateGutter(true);
   showIdle();
 }
 
@@ -471,5 +486,5 @@ async function analyze() {
 }
 
 
-updateGutter();
+updateGutter(true);
 loadExample();
