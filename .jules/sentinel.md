@@ -1,0 +1,4 @@
+## 2026-08-14 - [Secure Client-Side API Key Input Configuration]
+**Vulnerability:** Hardcoded API keys in client-side code lead to complete exposure of credentials. Storing API keys in insecure plain-text inputs or public repositories presents critical safety risks.
+**Learning:** For client-side single-page applications without a backend proxy, the safe design pattern is to accept the Anthropic API key dynamically from the user, securely mask it using an input element with `type="password"`, store it only locally in `localStorage`, and direct the requests with the mandatory browser-dangerous headers.
+**Prevention:** Avoid any static or environment-level API key storage on server deployments for client-side execution. Provide a secure, password-masked field with ID `#api-key-input` in the UI, read and write to `localStorage` wrapped in defensive try/catch blocks, and validate key presence safely on runtime.
