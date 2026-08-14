@@ -1,0 +1,3 @@
+## 2025-08-14 - Confirm Destructive Actions
+**Learning:** Destructive actions (like clearing the editor or loading an example over existing unsaved code) can cause severe loss of user work if executed accidentally. By conditionally requesting user confirmation only when the editor contains content, we protect user progress while keeping the experience frictionless for empty editors.
+**Action:** Always check the state of user inputs before executing actions that overwrite or clear them, and prompt for confirmation using native or custom dialogs only when there is potentially unsaved work. Ensure browser event listeners do not override default parameters.
