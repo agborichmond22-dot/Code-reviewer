@@ -141,14 +141,16 @@ function clearAll() {
 
 function copyCode() {
   if (!codeEl.value.trim()) return;
-  navigator.clipboard.writeText(codeEl.value);
-  toast('Code copied!');
+  navigator.clipboard.writeText(codeEl.value)
+    .then(() => toast('Code copied!'))
+    .catch(() => toast('Failed to copy code'));
 }
 
 function copyReview() {
   if (!fullReview) return;
-  navigator.clipboard.writeText(fullReview);
-  toast('Review copied!');
+  navigator.clipboard.writeText(fullReview)
+    .then(() => toast('Review copied!'))
+    .catch(() => toast('Failed to copy review'));
 }
 
 // ── UI STATE HELPERS ───────────────────────────────
@@ -193,7 +195,8 @@ function esc(s) {
     .replace(/&/g,'&amp;')
     .replace(/</g,'&lt;')
     .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
 }
 
 // Escape first, then apply safe inline formatting
@@ -379,6 +382,10 @@ Rules: use [HIGH], [MED], or [LOW] tags on every bug/security item. Backtick inl
 async function analyze() {
   const code = codeEl.value.trim();
   if (!code) { toast('Paste some code first!'); return; }
+  if (code.length > 50000) {
+    showError('Code snippet is too large. Maximum allowed size is 50,000 characters.');
+    return;
+  }
 
   const lang = document.getElementById('lang').value;
 
