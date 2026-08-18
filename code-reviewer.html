@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://api.anthropic.com; img-src 'self' data:; object-src 'none'; base-uri 'self';">
 <title>CodeCheck — AI Code Reviewer</title>
 <link rel="stylesheet" href="code-reviewer.css">
 </head>
@@ -27,7 +28,7 @@
       <option value="kotlin">Kotlin</option>
       <option value="csharp">C#</option>
     </select>
-    <button class="btn-run" id="run-btn" onclick="analyze()">
+    <button class="btn-run" id="run-btn">
       <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
         <path d="M5 3l14 9-14 9V3z"/>
       </svg>
@@ -42,9 +43,9 @@
     <div class="pane-bar">
       <span class="pane-label" id="line-count">1 line</span>
       <div class="pane-btns">
-        <button class="btn-sm" onclick="loadExample()">Example</button>
-        <button class="btn-sm" onclick="clearAll()">Clear</button>
-        <button class="btn-sm" onclick="copyCode()">Copy</button>
+        <button class="btn-sm" id="example-btn">Example</button>
+        <button class="btn-sm" id="clear-btn">Clear</button>
+        <button class="btn-sm" id="copy-code-btn">Copy</button>
       </div>
     </div>
     <div class="editor-wrap">
@@ -60,7 +61,7 @@
       <span class="pane-label">AI Review</span>
       <div class="pane-btns">
         <span class="claude-badge" id="model-pill" style="display:none">Claude</span>
-        <button class="btn-sm" id="copy-rev" onclick="copyReview()" style="display:none">Copy review</button>
+        <button class="btn-sm" id="copy-rev" style="display:none">Copy review</button>
       </div>
     </div>
     <div class="output-body" id="output">
