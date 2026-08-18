@@ -12,8 +12,21 @@ let fullReview = '';
 let toastTimer;
 
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+let lastLineCount = 0;
+
+// Optimized updateGutter: calculates line count in O(n) without allocating string arrays via .split('\n').
+// Early-returns when line count is unchanged to avoid costly innerHTML DOM reflows on every keystroke.
+function updateGutter(force) {
+  const val = codeEl.value;
+  let lines = 1;
+  for (let i = 0; i < val.length; i++) {
+    if (val.charCodeAt(i) === 10) lines++;
+  }
+
+  // Strictly check force === true since browser events pass an Event object as argument 1
+  if (lines === lastLineCount && force !== true) return;
+  lastLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
   gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
 }
