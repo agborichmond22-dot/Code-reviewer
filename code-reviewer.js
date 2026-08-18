@@ -190,10 +190,11 @@ function toast(msg) {
 // ── SAFE HTML HELPERS ──────────────────────────────
 function esc(s) {
   return String(s)
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 // Escape first, then apply safe inline formatting
@@ -470,6 +471,13 @@ async function analyze() {
   }
 }
 
+
+// ── EVENT LISTENERS ───────────────────────────────
+runBtn?.addEventListener('click', analyze);
+document.getElementById('example-btn')?.addEventListener('click', loadExample);
+document.getElementById('clear-btn')?.addEventListener('click', clearAll);
+document.getElementById('copy-code-btn')?.addEventListener('click', copyCode);
+copyRev?.addEventListener('click', copyReview);
 
 updateGutter();
 loadExample();
