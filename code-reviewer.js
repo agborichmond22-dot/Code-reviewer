@@ -128,12 +128,18 @@ class AuthService {
 };
 
 function loadExample() {
+  if (codeEl.value.trim() && !confirm('Replace current code with sample example?')) {
+    return;
+  }
   const lang = document.getElementById('lang').value;
   codeEl.value = EXAMPLES[lang] || EXAMPLES.javascript;
   updateGutter();
 }
 
 function clearAll() {
+  if (codeEl.value.trim() && !confirm('Clear all code?')) {
+    return;
+  }
   codeEl.value = '';
   updateGutter();
   showIdle();
