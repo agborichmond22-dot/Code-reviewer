@@ -83,6 +83,22 @@ select {
 
 select:hover { border-color: var(--accent); }
 
+.input-api-key {
+  background: var(--bg3);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  outline: none;
+  width: 150px;
+}
+
+.input-api-key:focus {
+  border-color: var(--accent);
+}
+
 .btn-run {
   display: flex;
   align-items: center;

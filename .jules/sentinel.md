@@ -1,0 +1,4 @@
+## 2026-08-21 - Unauthenticated API Requests and Insecure Secret Handling
+**Vulnerability:** API requests were made to external services without required authentication headers (`x-api-key`), and there was no secure, masked mechanism for user secret entry or persistent storage.
+**Learning:** Client-side API integrations often omit necessary auth headers or expose input fields as plain text without `autocomplete="off"` and `spellcheck="false"`, risking shoulder surfing or data leaking to browser extension/spellcheck services. Unhandled `localStorage` access can also crash in sandboxed/iframe contexts.
+**Prevention:** Always mask secret inputs (`type="password"` with `autocomplete="off"` and `spellcheck="false"`), wrap `localStorage` access in `try/catch` blocks, and supply explicit API authentication headers (`x-api-key`, `anthropic-version`, `anthropic-dangerous-direct-browser-access`).
