@@ -128,12 +128,18 @@ class AuthService {
 };
 
 function loadExample() {
+  if (codeEl.value.trim() && !confirm('Replace current code with sample example?')) {
+    return;
+  }
   const lang = document.getElementById('lang').value;
   codeEl.value = EXAMPLES[lang] || EXAMPLES.javascript;
   updateGutter();
 }
 
 function clearAll() {
+  if (codeEl.value.trim() && !confirm('Are you sure you want to clear the editor?')) {
+    return;
+  }
   codeEl.value = '';
   updateGutter();
   showIdle();
@@ -463,7 +469,7 @@ async function analyze() {
   } finally {
     runBtn.disabled = false;
     runBtn.innerHTML = `
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M5 3l14 9-14 9V3z"/>
       </svg>
       Analyze`;
