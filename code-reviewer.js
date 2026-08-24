@@ -386,7 +386,7 @@ async function analyze() {
   runBtn.disabled = true;
   runBtn.innerHTML = `
     <div class="spinner" style="width:11px;height:11px;border-width:1.5px;
-      border-color:rgba(255,255,255,0.2);border-top-color:#fff;margin:0"></div>
+      border-color:rgba(255,255,255,0.2);border-top-color:#fff;margin:0" aria-hidden="true"></div>
     Analyzing`;
 
   fullReview = '';
@@ -463,7 +463,7 @@ async function analyze() {
   } finally {
     runBtn.disabled = false;
     runBtn.innerHTML = `
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M5 3l14 9-14 9V3z"/>
       </svg>
       Analyze`;
