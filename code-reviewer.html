@@ -14,7 +14,7 @@
     CodeCheck
   </div>
   <div class="header-right">
-    <select id="lang">
+    <select id="lang" aria-label="Programming language">
       <option value="javascript">JavaScript</option>
       <option value="typescript">TypeScript</option>
       <option value="python">Python</option>
@@ -27,8 +27,8 @@
       <option value="kotlin">Kotlin</option>
       <option value="csharp">C#</option>
     </select>
-    <button class="btn-run" id="run-btn" onclick="analyze()">
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+    <button class="btn-run" id="run-btn" onclick="analyze()" aria-label="Analyze code with AI">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M5 3l14 9-14 9V3z"/>
       </svg>
       Analyze
@@ -42,14 +42,15 @@
     <div class="pane-bar">
       <span class="pane-label" id="line-count">1 line</span>
       <div class="pane-btns">
-        <button class="btn-sm" onclick="loadExample()">Example</button>
-        <button class="btn-sm" onclick="clearAll()">Clear</button>
-        <button class="btn-sm" onclick="copyCode()">Copy</button>
+        <button class="btn-sm" onclick="loadExample()" aria-label="Load example code">Example</button>
+        <button class="btn-sm" onclick="clearAll()" aria-label="Clear code editor">Clear</button>
+        <button class="btn-sm" onclick="copyCode()" aria-label="Copy code to clipboard">Copy</button>
       </div>
     </div>
     <div class="editor-wrap">
-      <div class="line-gutter" id="gutter"></div>
+      <div class="line-gutter" id="gutter" aria-hidden="true"></div>
       <textarea id="code-input" spellcheck="false" autocorrect="off" autocomplete="off"
+        aria-label="Code input editor" aria-describedby="line-count"
         placeholder="// Paste your code here&#10;// or click Example to load a sample&#10;// then hit Analyze (or Ctrl + Enter)"></textarea>
     </div>
   </div>
@@ -60,12 +61,12 @@
       <span class="pane-label">AI Review</span>
       <div class="pane-btns">
         <span class="claude-badge" id="model-pill" style="display:none">Claude</span>
-        <button class="btn-sm" id="copy-rev" onclick="copyReview()" style="display:none">Copy review</button>
+        <button class="btn-sm" id="copy-rev" onclick="copyReview()" style="display:none" aria-label="Copy review to clipboard">Copy review</button>
       </div>
     </div>
-    <div class="output-body" id="output">
+    <div class="output-body" id="output" role="region" aria-label="AI Review Output" aria-live="polite">
       <div class="idle">
-        <div class="idle-icon">&lt;/&gt;</div>
+        <div class="idle-icon" aria-hidden="true">&lt;/&gt;</div>
         <h3>Ready to review</h3>
         <p>Paste code on the left and click Analyze</p>
         <p style="margin-top:5px">or press <kbd>Ctrl+Enter</kbd></p>
@@ -74,7 +75,7 @@
   </div>
 </main>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="code-reviewer.js"></script>
 </body>
