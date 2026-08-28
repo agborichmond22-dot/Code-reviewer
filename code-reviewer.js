@@ -12,8 +12,14 @@ let fullReview = '';
 let toastTimer;
 
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
+let cachedLineCount = -1;
+
+// Performance: avoid DOM updates & array allocations when line count hasn't changed (e.g. standard typing)
+function updateGutter(force = false) {
   const lines = codeEl.value.split('\n').length;
+  if (force !== true && lines === cachedLineCount) return;
+  cachedLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
   gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
 }
