@@ -193,7 +193,8 @@ function esc(s) {
     .replace(/&/g,'&amp;')
     .replace(/</g,'&lt;')
     .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
 }
 
 // Escape first, then apply safe inline formatting
@@ -204,9 +205,9 @@ function inline(raw) {
   t = t.replace(/\[MED\]/g,  '<span class="badge b-m">MED</span>');
   t = t.replace(/\[LOW\]/g,  '<span class="badge b-l">LOW</span>');
   // Inline code  `foo`
-  t = t.replace(/`([^`]+)`/g, '<code class="icode">$1</code>');
+  t = t.replace(/`([^`]+)`/g, (_, code) => `<code class="icode">${code}</code>`);
   // Bold  **foo**
-  t = t.replace(/\*\*([^*]+)\*\*/g, '<strong style="font-weight:500;color:var(--text)">$1</strong>');
+  t = t.replace(/\*\*([^*]+)\*\*/g, (_, text) => `<strong style="font-weight:500;color:var(--text)">${text}</strong>`);
   return t;
 }
 
