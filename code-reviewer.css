@@ -1,13 +1,19 @@
 :root {
-  --bg: #060708;
-  --bg2: #0d0f11;
-  --bg3: #16181b;
-  --border: #262a2e;
-  --text: #e6edf3;
-  --text-md: #8b949e;
-  --accent: #4a9eff;
-  --accent-dim: #2f6bb3;
-  --accent-soft: #1a3a5c;
+  --bg: #0d0d0d;
+  --bg2: #161616;
+  --bg3: #222222;
+  --border: #333333;
+  --text: #f0f0f0;
+  --text-md: #a0a0a0;
+
+  --blue: #2f80ed;
+  --blue-hover: #1f60c2;
+  --blue-soft: #122840;
+
+  --red: #eb5757;
+  --red-hover: #c0392b;
+  --red-soft: #3b1215;
+
   --font-sans: Inter, system-ui, -apple-system, sans-serif;
   --font-mono: JetBrains Mono, SFMono-Regular, Consolas, monospace;
 }
@@ -50,10 +56,11 @@ header {
   font-family: var(--font-mono);
   font-weight: 500;
   font-size: 13px;
-  background: var(--accent-dim);
+  background: var(--blue-soft);
   padding: 4px 8px;
   border-radius: 6px;
-  color: #fff;
+  color: var(--blue);
+  border: 1px solid var(--blue-hover);
 }
 
 .header-right {
@@ -73,19 +80,19 @@ select {
   outline: none;
   cursor: pointer;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a0a0a0' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 8px center;
 }
 
-select:hover { border-color: var(--accent); }
+select:hover { border-color: var(--blue); }
 
 .btn-run {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: var(--accent-dim);
-  color: #fff;
+  background: var(--blue);
+  color: #ffffff;
   border: none;
   padding: 6px 14px;
   border-radius: 6px;
@@ -93,11 +100,10 @@ select:hover { border-color: var(--accent); }
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: filter 0.15s;
 }
 
-.btn-run:hover:not(:disabled) { filter: brightness(1.15); }
-.btn-run:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-run:hover:not(:disabled) { background: var(--blue-hover); }
+.btn-run:disabled { background: #1f3a60; color: #667890; cursor: not-allowed; }
 
 main {
   display: flex;
@@ -148,18 +154,19 @@ main {
   font-family: var(--font-sans);
   font-size: 12px;
   cursor: pointer;
-  transition: all 0.15s;
 }
 
 .btn-sm:hover {
   color: var(--text);
-  border-color: var(--text-md);
+  border-color: var(--blue);
+  background: #2a2a2a;
 }
 
 .claude-badge {
   font-size: 11px;
-  background: var(--accent-soft);
-  color: var(--accent);
+  background: var(--blue-soft);
+  color: var(--blue);
+  border: 1px solid var(--blue-hover);
   padding: 2px 8px;
   border-radius: 12px;
   font-weight: 600;
@@ -204,7 +211,7 @@ main {
   tab-size: 2;
 }
 
-#code-input::placeholder { color: #484f58; }
+#code-input::placeholder { color: #555555; }
 
 #code-input::-webkit-scrollbar,
 .output-body::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -219,7 +226,7 @@ main {
 }
 
 #code-input::-webkit-scrollbar-thumb:hover,
-.output-body::-webkit-scrollbar-thumb:hover { background: #484f58; }
+.output-body::-webkit-scrollbar-thumb:hover { background: #555555; }
 
 .output-body {
   flex: 1;
@@ -253,7 +260,7 @@ hr.sep {
   font-size: 38px;
   font-weight: 700;
   letter-spacing: -1px;
-  color: var(--accent);
+  color: var(--blue);
 }
 
 .score-of { font-size: 18px; color: var(--text-md); }
@@ -264,8 +271,6 @@ hr.sep {
   line-height: 1.6;
 }
 
-/* All severity/category headings now share one accent color instead of
-   swapping hues (red/purple/amber/cyan/green) — only weight/opacity differs. */
 .s-head {
   font-size: 13px;
   font-weight: 600;
@@ -274,21 +279,27 @@ hr.sep {
   margin: 6px 0 8px;
   padding-left: 10px;
   border-left: 3px solid;
-  color: var(--accent);
-  border-color: var(--accent);
 }
 
 .c-red,
-.c-purple,
-.c-amber,
-.c-cyan,
-.c-green,
-.c-muted {
-  color: var(--accent);
-  border-color: var(--accent);
+.c-purple {
+  color: var(--red);
+  border-color: var(--red);
 }
 
-p.clean { color: var(--accent); font-weight: 500; font-size: 13px; }
+.c-amber,
+.c-cyan,
+.c-green {
+  color: var(--blue);
+  border-color: var(--blue);
+}
+
+.c-muted {
+  color: var(--text-md);
+  border-color: var(--border);
+}
+
+p.clean { color: var(--blue); font-weight: 500; font-size: 13px; }
 
 .item {
   display: flex;
@@ -303,7 +314,7 @@ p.clean { color: var(--accent); font-weight: 500; font-size: 13px; }
 .item-dot {
   width: 6px;
   height: 6px;
-  background: var(--accent-dim);
+  background: var(--blue);
   border-radius: 50%;
   margin-top: 7px;
   flex-shrink: 0;
@@ -329,11 +340,9 @@ code.icode {
   border-radius: 3px;
   font-family: var(--font-mono);
   font-size: 12px;
-  color: var(--accent);
+  color: var(--blue);
 }
 
-/* Severity badges: same blue accent throughout, only background opacity
-   changes so "high/medium/low" is still distinguishable without new hues. */
 .badge {
   font-size: 10px;
   font-weight: 700;
@@ -342,12 +351,11 @@ code.icode {
   text-transform: uppercase;
   letter-spacing: 0.3px;
   margin-right: 4px;
-  color: var(--accent);
 }
 
-.b-h { background: rgba(74,158,255,0.28); }
-.b-m { background: rgba(74,158,255,0.18); }
-.b-l { background: rgba(74,158,255,0.10); }
+.b-h { background: var(--red-soft); color: var(--red); border: 1px solid #7a2227; }
+.b-m { background: #3a1c1e; color: #e06c75; border: 1px solid #5c262a; }
+.b-l { background: var(--blue-soft); color: var(--blue); border: 1px solid #1f3a60; }
 
 .idle {
   display: flex;
@@ -363,7 +371,7 @@ code.icode {
 .idle-icon {
   font-family: var(--font-mono);
   font-size: 36px;
-  opacity: 0.3;
+  color: #555555;
   margin-bottom: 8px;
 }
 
@@ -395,7 +403,7 @@ kbd {
   width: 28px;
   height: 28px;
   border: 2px solid var(--border);
-  border-top-color: var(--accent);
+  border-top-color: var(--blue);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -404,13 +412,12 @@ kbd {
   to { transform: rotate(360deg); }
 }
 
-/* Error box kept in blue/grey instead of red so no new hue appears */
 .err-box {
-  background: rgba(74,158,255,0.08);
-  border: 1px solid rgba(74,158,255,0.25);
+  background: var(--red-soft);
+  border: 1px solid #7a2227;
   border-radius: 8px;
   padding: 14px 18px;
-  color: var(--accent);
+  color: var(--red);
   font-size: 13px;
   line-height: 1.6;
 }
@@ -419,46 +426,33 @@ kbd {
   display: inline-block;
   width: 2px;
   height: 15px;
-  background: var(--accent);
+  background: var(--blue);
   margin-left: 2px;
   vertical-align: middle;
   animation: blink 0.9s step-end infinite;
 }
 
 @keyframes blink {
-  50% { opacity: 0; }
+  50% { visibility: hidden; }
 }
 
 .toast {
   position: fixed;
   bottom: 24px;
   left: 50%;
-  transform: translateX(-50%) translateY(20px);
+  transform: translateX(-50%);
   background: var(--bg3);
   color: var(--text);
   border: 1px solid var(--border);
   padding: 8px 16px;
   border-radius: 6px;
   font-size: 13px;
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.25s ease;
+  display: none;
   z-index: 1000;
 }
 
 .toast.on {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.score-card,
-hr.sep {
-  animation: fadeIn 0.3s ease;
+  display: block;
 }
 
 strong { color: var(--text); }
