@@ -1,16 +1,13 @@
 :root {
-  --bg: #0d1117;
-  --bg2: #161b22;
-  --bg3: #21262d;
-  --border: #30363d;
+  --bg: #060708;
+  --bg2: #0d0f11;
+  --bg3: #16181b;
+  --border: #262a2e;
   --text: #e6edf3;
   --text-md: #8b949e;
-  --accent: #58a6ff;
-  --green: #3fb950;
-  --red: #f85149;
-  --amber: #d2991d;
-  --purple: #a371f7;
-  --cyan: #39d353;
+  --accent: #4a9eff;
+  --accent-dim: #2f6bb3;
+  --accent-soft: #1a3a5c;
   --font-sans: Inter, system-ui, -apple-system, sans-serif;
   --font-mono: JetBrains Mono, SFMono-Regular, Consolas, monospace;
 }
@@ -53,7 +50,7 @@ header {
   font-family: var(--font-mono);
   font-weight: 500;
   font-size: 13px;
-  background: linear-gradient(135deg, var(--accent), var(--purple));
+  background: var(--accent-dim);
   padding: 4px 8px;
   border-radius: 6px;
   color: #fff;
@@ -87,7 +84,7 @@ select:hover { border-color: var(--accent); }
   display: flex;
   align-items: center;
   gap: 6px;
-  background: linear-gradient(135deg, #1f6feb, #1158c7);
+  background: var(--accent-dim);
   color: #fff;
   border: none;
   padding: 6px 14px;
@@ -99,7 +96,7 @@ select:hover { border-color: var(--accent); }
   transition: filter 0.15s;
 }
 
-.btn-run:hover:not(:disabled) { filter: brightness(1.1); }
+.btn-run:hover:not(:disabled) { filter: brightness(1.15); }
 .btn-run:disabled { opacity: 0.5; cursor: not-allowed; }
 
 main {
@@ -161,8 +158,8 @@ main {
 
 .claude-badge {
   font-size: 11px;
-  background: linear-gradient(135deg, #d4a574, #b08968);
-  color: #1d1d1d;
+  background: var(--accent-soft);
+  color: var(--accent);
   padding: 2px 8px;
   border-radius: 12px;
   font-weight: 600;
@@ -256,6 +253,7 @@ hr.sep {
   font-size: 38px;
   font-weight: 700;
   letter-spacing: -1px;
+  color: var(--accent);
 }
 
 .score-of { font-size: 18px; color: var(--text-md); }
@@ -266,6 +264,8 @@ hr.sep {
   line-height: 1.6;
 }
 
+/* All severity/category headings now share one accent color instead of
+   swapping hues (red/purple/amber/cyan/green) — only weight/opacity differs. */
 .s-head {
   font-size: 13px;
   font-weight: 600;
@@ -274,16 +274,21 @@ hr.sep {
   margin: 6px 0 8px;
   padding-left: 10px;
   border-left: 3px solid;
+  color: var(--accent);
+  border-color: var(--accent);
 }
 
-.c-red     { color: var(--red); border-color: var(--red); }
-.c-purple  { color: var(--purple); border-color: var(--purple); }
-.c-amber   { color: var(--amber); border-color: var(--amber); }
-.c-cyan    { color: var(--cyan); border-color: var(--cyan); }
-.c-green   { color: var(--green); border-color: var(--green); }
-.c-muted   { color: var(--text-md); border-color: var(--text-md); }
+.c-red,
+.c-purple,
+.c-amber,
+.c-cyan,
+.c-green,
+.c-muted {
+  color: var(--accent);
+  border-color: var(--accent);
+}
 
-p.clean { color: var(--green); font-weight: 500; font-size: 13px; }
+p.clean { color: var(--accent); font-weight: 500; font-size: 13px; }
 
 .item {
   display: flex;
@@ -298,7 +303,7 @@ p.clean { color: var(--green); font-weight: 500; font-size: 13px; }
 .item-dot {
   width: 6px;
   height: 6px;
-  background: var(--text-md);
+  background: var(--accent-dim);
   border-radius: 50%;
   margin-top: 7px;
   flex-shrink: 0;
@@ -327,6 +332,8 @@ code.icode {
   color: var(--accent);
 }
 
+/* Severity badges: same blue accent throughout, only background opacity
+   changes so "high/medium/low" is still distinguishable without new hues. */
 .badge {
   font-size: 10px;
   font-weight: 700;
@@ -335,11 +342,12 @@ code.icode {
   text-transform: uppercase;
   letter-spacing: 0.3px;
   margin-right: 4px;
+  color: var(--accent);
 }
 
-.b-h { background: rgba(248,81,73,0.2); color: var(--red); }
-.b-m { background: rgba(210,153,29,0.2); color: var(--amber); }
-.b-l { background: rgba(63,185,80,0.2); color: var(--green); }
+.b-h { background: rgba(74,158,255,0.28); }
+.b-m { background: rgba(74,158,255,0.18); }
+.b-l { background: rgba(74,158,255,0.10); }
 
 .idle {
   display: flex;
@@ -396,12 +404,13 @@ kbd {
   to { transform: rotate(360deg); }
 }
 
+/* Error box kept in blue/grey instead of red so no new hue appears */
 .err-box {
-  background: rgba(248,81,73,0.1);
-  border: 1px solid rgba(248,81,73,0.3);
+  background: rgba(74,158,255,0.08);
+  border: 1px solid rgba(74,158,255,0.25);
   border-radius: 8px;
   padding: 14px 18px;
-  color: var(--red);
+  color: var(--accent);
   font-size: 13px;
   line-height: 1.6;
 }
