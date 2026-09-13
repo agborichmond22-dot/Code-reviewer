@@ -214,11 +214,11 @@ function inline(raw) {
 function headColor(title) {
   const t = title.toLowerCase();
   if (/bug|error|issue/.test(t))              return 'c-red';
-  if (/security|vuln|xss|inject|csrf/.test(t)) return 'c-purple';
-  if (/performance|perf|optim|speed/.test(t)) return 'c-amber';
-  if (/suggest|improve|refactor|tip/.test(t)) return 'c-cyan';
-  if (/strength|good|well|positive|work/.test(t)) return 'c-green';
-  return 'c-muted';
+  if (/security|vuln|xss|inject|csrf/.test(t)) return 'c-red';
+  if (/performance|perf|optim|speed/.test(t)) return 'c-blue';
+  if (/suggest|improve|refactor|tip/.test(t)) return 'c-blue';
+  if (/strength|good|well|positive|work/.test(t)) return 'c-blue';
+  return 'c-blue';
 }
 
 // Render list/prose content inside a section (handles code blocks too)
