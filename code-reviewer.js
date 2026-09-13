@@ -174,7 +174,7 @@ function showLoading() {
 function showError(msg) {
   outputEl.innerHTML = `<div class="err-box">
     ⚠ ${esc(msg)}<br>
-    <small style="opacity:0.6;font-size:11px;margin-top:6px;display:block">
+    <small style="color:var(--text-md);font-size:11px;margin-top:6px;display:block">
       Check your code and try again
     </small>
   </div>`;
@@ -386,7 +386,7 @@ async function analyze() {
   runBtn.disabled = true;
   runBtn.innerHTML = `
     <div class="spinner" style="width:11px;height:11px;border-width:1.5px;
-      border-color:rgba(255,255,255,0.2);border-top-color:#fff;margin:0"></div>
+      border-color:#1f60c2;border-top-color:#ffffff;margin:0"></div>
     Analyzing`;
 
   fullReview = '';
