@@ -128,7 +128,7 @@ class AuthService {
 };
 
 function loadExample() {
-  const lang = document.getElementById('lang').value;
+  const lang = sanitizeLang(document.getElementById('lang').value);
   codeEl.value = EXAMPLES[lang] || EXAMPLES.javascript;
   updateGutter();
 }
@@ -339,8 +339,16 @@ function formatReview(text) {
   return html;
 }
 
+// ── INPUT SANITIZATION HELPERS ──────────────────
+// Sanitize programming language identifier to prevent prompt injection or broken markdown formatting
+function sanitizeLang(lang) {
+  const safe = String(lang || '').replace(/[^a-zA-Z0-9+#-]/g, '').slice(0, 30);
+  return safe || 'javascript';
+}
+
 // ── SYSTEM PROMPT ──────────────────────────────────
 function buildPrompt(lang) {
+  const safeLang = sanitizeLang(lang);
   return `You are a senior software engineer doing a professional code review. Be direct, specific, and educational — always reference actual code from the submission using backticks.
 
 Format your response exactly using these markdown headings:
@@ -369,7 +377,7 @@ Format your response exactly using these markdown headings:
 - What the code does well. Be specific.
 
 ## 📝 Refactored Version
-\`\`\`${lang}
+\`\`\`${safeLang}
 [Improved version with the main issues fixed. Add concise inline comments explaining key changes.]
 \`\`\`
 
@@ -381,7 +389,7 @@ async function analyze() {
   const code = codeEl.value.trim();
   if (!code) { toast('Paste some code first!'); return; }
 
-  const lang = document.getElementById('lang').value;
+  const lang = sanitizeLang(document.getElementById('lang').value);
 
   // Update button state
   runBtn.disabled = true;
