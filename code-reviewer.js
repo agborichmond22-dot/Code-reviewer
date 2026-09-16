@@ -188,6 +188,8 @@ function toast(msg) {
 }
 
 // ── SAFE HTML HELPERS ──────────────────────────────
+const MAX_CODE_LENGTH = 50000; // Limit code input to prevent DoS & API payload bloat
+
 function esc(s) {
   return String(s)
     .replace(/&/g,'&amp;')
@@ -204,10 +206,10 @@ function inline(raw) {
   t = t.replace(/\[HIGH\]/g, '<span class="badge b-h">HIGH</span>');
   t = t.replace(/\[MED\]/g,  '<span class="badge b-m">MED</span>');
   t = t.replace(/\[LOW\]/g,  '<span class="badge b-l">LOW</span>');
-  // Inline code  `foo`
-  t = t.replace(/`([^`]+)`/g, '<code class="icode">$1</code>');
-  // Bold  **foo**
-  t = t.replace(/\*\*([^*]+)\*\*/g, '<strong style="font-weight:500;color:var(--text)">$1</strong>');
+  // Inline code  `foo` using callback replacement to prevent pattern evaluation ($1, $&, $')
+  t = t.replace(/`([^`]+)`/g, (_, code) => `<code class="icode">${code}</code>`);
+  // Bold  **foo** using callback replacement to prevent pattern evaluation
+  t = t.replace(/\*\*([^*]+)\*\*/g, (_, bold) => `<strong style="font-weight:500;color:var(--text)">${bold}</strong>`);
   return t;
 }
 
@@ -380,6 +382,12 @@ Rules: use [HIGH], [MED], or [LOW] tags on every bug/security item. Backtick inl
 async function analyze() {
   const code = codeEl.value.trim();
   if (!code) { toast('Paste some code first!'); return; }
+
+  // Security check: mitigate DoS and large payload costs
+  if (code.length > MAX_CODE_LENGTH) {
+    showError(`Code submission is too large (${code.length.toLocaleString()} characters). Maximum allowed size is ${MAX_CODE_LENGTH.toLocaleString()} characters.`);
+    return;
+  }
 
   const lang = document.getElementById('lang').value;
 
