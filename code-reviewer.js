@@ -11,9 +11,16 @@ const toastEl   = document.getElementById('toast');
 let fullReview = '';
 let toastTimer;
 
+let cachedLineCount = 0;
+
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
+// Performance Optimization (Bolt ⚡): Cache line count and perform O(1) early exit
+// on keystrokes that do not change total line count, avoiding redundant DOM writes
+// and array allocations on every input event.
+function updateGutter(force = false) {
   const lines = codeEl.value.split('\n').length;
+  if (force !== true && lines === cachedLineCount) return;
+  cachedLineCount = lines;
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
   gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
 }
