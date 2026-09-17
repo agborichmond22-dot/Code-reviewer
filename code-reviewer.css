@@ -514,3 +514,13 @@ kbd {
 strong {
   color: var(--text);
 }
+
+button:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
+}
+#code-input:focus-visible {
+  outline-offset: -2px;
+}
