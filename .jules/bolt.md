@@ -1,0 +1,3 @@
+## 2026-09-18 - Event Listener Default Parameter Override on Line Number Gutter
+**Learning:** Registering a JavaScript function with a default parameter (e.g. `updateGutter(force = false)`) directly as an event listener causes the browser to pass the implicit `Event` object as the first parameter. Checking boolean parameter strictly (`force !== true`) prevents truthy `Event` objects from bypassing cached line count guards during input events.
+**Action:** Always use strict equality checks (`force === true` / `force !== true`) when default function arguments are registered directly as browser DOM event listeners.
