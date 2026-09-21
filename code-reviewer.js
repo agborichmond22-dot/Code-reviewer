@@ -187,6 +187,8 @@ function toast(msg) {
   toastTimer = setTimeout(() => toastEl.classList.remove('on'), 1800);
 }
 
+const MAX_CODE_LENGTH = 50000; // Limit input length to mitigate DoS and oversized API payload risks
+
 // ── SAFE HTML HELPERS ──────────────────────────────
 function esc(s) {
   return String(s)
@@ -380,6 +382,10 @@ Rules: use [HIGH], [MED], or [LOW] tags on every bug/security item. Backtick inl
 async function analyze() {
   const code = codeEl.value.trim();
   if (!code) { toast('Paste some code first!'); return; }
+  if (code.length > MAX_CODE_LENGTH) {
+    showError(`Code submission is too large (${code.length.toLocaleString()} characters). Maximum allowed length is ${MAX_CODE_LENGTH.toLocaleString()} characters.`);
+    return;
+  }
 
   const lang = document.getElementById('lang').value;
 
