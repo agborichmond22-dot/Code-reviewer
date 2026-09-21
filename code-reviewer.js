@@ -12,10 +12,27 @@ let fullReview = '';
 let toastTimer;
 
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+let cachedLineCount = -1;
+
+// Performance optimization: Count lines using fast char code scanning instead of split.
+// Early-return if line count hasn't changed to avoid expensive DOM innerHTML re-renders and string allocations on every keystroke.
+function updateGutter(force = false) {
+  const val = codeEl.value;
+  let lines = 1;
+  for (let i = 0; i < val.length; i++) {
+    if (val.charCodeAt(i) === 10) lines++;
+  }
+
+  // Check strictly for boolean true to prevent event object passing from triggering forced update
+  if (lines === cachedLineCount && force !== true) return;
+  cachedLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
-  gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
+  let numbersHtml = '';
+  for (let i = 1; i <= lines; i++) {
+    numbersHtml += (i === 1 ? '1' : '<br>' + i);
+  }
+  gutterEl.innerHTML = numbersHtml;
 }
 
 codeEl.addEventListener('input', updateGutter);
