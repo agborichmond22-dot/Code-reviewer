@@ -10,10 +10,15 @@ const toastEl   = document.getElementById('toast');
 
 let fullReview = '';
 let toastTimer;
+let cachedLineCount = 0;
 
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
+// Performance optimization: Avoid DOM gutter innerHTML re-renders and array allocations
+// on every keystroke by checking if total line count has changed.
+function updateGutter(force = false) {
   const lines = codeEl.value.split('\n').length;
+  if (force !== true && lines === cachedLineCount) return;
+  cachedLineCount = lines;
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
   gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
 }
