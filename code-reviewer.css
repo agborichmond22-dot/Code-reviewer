@@ -514,3 +514,15 @@ kbd {
 strong {
   color: var(--text);
 }
+
+.btn-sm:focus-visible,
+.btn-run:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 1px;
+}
+
+#code-input:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: -2px;
+}
