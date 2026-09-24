@@ -12,10 +12,31 @@ let fullReview = '';
 let toastTimer;
 
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+let cachedLineCount = 0;
+
+// O(N) line counter without array allocations
+function countLines(str) {
+  let count = 1;
+  for (let i = 0; i < str.length; i++) {
+    if (str[i] === '\n') count++;
+  }
+  return count;
+}
+
+// Optimized line gutter update: skips expensive DOM & array ops when line count is unchanged.
+// Avoids keystroke input lag during active editing.
+function updateGutter(force = false) {
+  const lines = countLines(codeEl.value);
+  // Strict check (force !== true) because event listeners pass InputEvent as 1st parameter
+  if (force !== true && lines === cachedLineCount) return;
+  cachedLineCount = lines;
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
-  gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
+
+  let numbers = '';
+  for (let i = 1; i <= lines; i++) {
+    numbers += (i > 1 ? '<br>' : '') + i;
+  }
+  gutterEl.innerHTML = numbers;
 }
 
 codeEl.addEventListener('input', updateGutter);
@@ -130,12 +151,12 @@ class AuthService {
 function loadExample() {
   const lang = document.getElementById('lang').value;
   codeEl.value = EXAMPLES[lang] || EXAMPLES.javascript;
-  updateGutter();
+  updateGutter(true);
 }
 
 function clearAll() {
   codeEl.value = '';
-  updateGutter();
+  updateGutter(true);
   showIdle();
 }
 
@@ -472,5 +493,5 @@ async function analyze() {
 }
 
 
-updateGutter();
+updateGutter(true);
 loadExample();
