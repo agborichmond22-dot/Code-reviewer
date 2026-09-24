@@ -8,6 +8,9 @@ const modelPill = document.getElementById('model-pill');
 const copyRev   = document.getElementById('copy-rev');
 const toastEl   = document.getElementById('toast');
 
+// Maximum allowed code length (characters) to mitigate client DoS and excessive payload risks
+const MAX_CODE_LENGTH = 50000;
+
 let fullReview = '';
 let toastTimer;
 
@@ -380,6 +383,12 @@ Rules: use [HIGH], [MED], or [LOW] tags on every bug/security item. Backtick inl
 async function analyze() {
   const code = codeEl.value.trim();
   if (!code) { toast('Paste some code first!'); return; }
+
+  // Mitigate client DoS and excessive API payload risk
+  if (code.length > MAX_CODE_LENGTH) {
+    showError('Code exceeds maximum length of 50,000 characters.');
+    return;
+  }
 
   const lang = document.getElementById('lang').value;
 
