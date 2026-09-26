@@ -12,10 +12,28 @@ let fullReview = '';
 let toastTimer;
 
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+let cachedLineCount = -1;
+
+// Bolt optimization: Cache line count to prevent unnecessary DOM updates
+// and avoid array allocations (.split / Array.from) on every keystroke.
+function updateGutter(force = false) {
+  const code = codeEl.value;
+  let lines = 1;
+  for (let i = 0; i < code.length; i++) {
+    if (code.charCodeAt(i) === 10) lines++;
+  }
+
+  // Strict check (force === true) ensures browser Event objects passed by listeners don't bypass cache
+  if (force !== true && lines === cachedLineCount) return;
+  cachedLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
-  gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
+
+  let html = '';
+  for (let i = 1; i <= lines; i++) {
+    html += (i > 1 ? '<br>' : '') + i;
+  }
+  gutterEl.innerHTML = html;
 }
 
 codeEl.addEventListener('input', updateGutter);
