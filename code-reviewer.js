@@ -200,14 +200,14 @@ function esc(s) {
 // Escape first, then apply safe inline formatting
 function inline(raw) {
   let t = esc(raw);
-  // Severity badges
-  t = t.replace(/\[HIGH\]/g, '<span class="badge b-h">HIGH</span>');
-  t = t.replace(/\[MED\]/g,  '<span class="badge b-m">MED</span>');
-  t = t.replace(/\[LOW\]/g,  '<span class="badge b-l">LOW</span>');
+  // Severity badges - use function replacers to prevent special pattern evaluation ($1, $&, etc.)
+  t = t.replace(/\[HIGH\]/g, () => '<span class="badge b-h">HIGH</span>');
+  t = t.replace(/\[MED\]/g,  () => '<span class="badge b-m">MED</span>');
+  t = t.replace(/\[LOW\]/g,  () => '<span class="badge b-l">LOW</span>');
   // Inline code  `foo`
-  t = t.replace(/`([^`]+)`/g, '<code class="icode">$1</code>');
+  t = t.replace(/`([^`]+)`/g, (_, code) => `<code class="icode">${code}</code>`);
   // Bold  **foo**
-  t = t.replace(/\*\*([^*]+)\*\*/g, '<strong style="font-weight:500;color:var(--text)">$1</strong>');
+  t = t.replace(/\*\*([^*]+)\*\*/g, (_, text) => `<strong style="font-weight:500;color:var(--text)">${text}</strong>`);
   return t;
 }
 
@@ -246,10 +246,10 @@ function renderBody(lines) {
 
     if (/^[-•*]\s/.test(t)) {
       // List item
-      html += `<div class="item"><div class="item-dot"></div><div>${inline(t.replace(/^[-•*]\s+/, ''))}</div></div>`;
+      html += `<div class="item"><div class="item-dot"></div><div>${inline(t.replace(/^[-•*]\s+/, () => ''))}</div></div>`;
     } else if (/^✓/.test(t)) {
       // Clean check
-      html += `<p class="clean">✓ ${esc(t.replace(/^✓\s*/, ''))}</p>`;
+      html += `<p class="clean">✓ ${esc(t.replace(/^✓\s*/, () => ''))}</p>`;
     } else {
       // Plain paragraph
       html += `<p style="font-size:13px;color:var(--text-md);margin-bottom:4px;line-height:1.65">${inline(t)}</p>`;
