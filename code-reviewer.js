@@ -421,6 +421,8 @@ async function analyze() {
     const decoder = new TextDecoder();
     let buf = '';
     let firstChunk = true;
+    let renderPending = false;
+    let rafId = null;
 
     while (true) {
       const { done, value } = await reader.read();
@@ -448,15 +450,23 @@ async function analyze() {
             firstChunk = false;
           }
           fullReview += evt.delta.text;
-          // Re-render with streaming cursor
-          outputEl.innerHTML = formatReview(fullReview) + '<span class="cursor"></span>';
-          outputEl.scrollTop = outputEl.scrollHeight;
+          // Throttle DOM re-renders to animation frames (~60fps) to prevent high CPU thrashing during SSE token streaming
+          if (!renderPending) {
+            renderPending = true;
+            rafId = requestAnimationFrame(() => {
+              renderPending = false;
+              outputEl.innerHTML = formatReview(fullReview) + '<span class="cursor"></span>';
+              outputEl.scrollTop = outputEl.scrollHeight;
+            });
+          }
         }
       }
     }
 
-    // Final render — remove streaming cursor
+    if (rafId) cancelAnimationFrame(rafId);
+    // Final render — remove streaming cursor and ensure output is completely updated
     outputEl.innerHTML = formatReview(fullReview);
+    outputEl.scrollTop = outputEl.scrollHeight;
     copyRev.style.display = 'inline-block';
 
   } catch (err) {
