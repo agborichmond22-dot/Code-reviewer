@@ -96,6 +96,17 @@ select:focus-visible {
   border-color: var(--accent-blue);
 }
 
+.btn-sm:focus-visible,
+.btn-run:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 1px;
+}
+
+#code-input:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: -2px;
+}
+
 .btn-run {
   display: flex;
   align-items: center;
