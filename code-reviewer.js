@@ -204,10 +204,10 @@ function inline(raw) {
   t = t.replace(/\[HIGH\]/g, '<span class="badge b-h">HIGH</span>');
   t = t.replace(/\[MED\]/g,  '<span class="badge b-m">MED</span>');
   t = t.replace(/\[LOW\]/g,  '<span class="badge b-l">LOW</span>');
-  // Inline code  `foo`
-  t = t.replace(/`([^`]+)`/g, '<code class="icode">$1</code>');
-  // Bold  **foo**
-  t = t.replace(/\*\*([^*]+)\*\*/g, '<strong style="font-weight:500;color:var(--text)">$1</strong>');
+  // Inline code  `foo` - use function replacement to prevent $1, $& evaluation on untrusted content
+  t = t.replace(/`([^`]+)`/g, (_, code) => `<code class="icode">${code}</code>`);
+  // Bold  **foo** - use function replacement to prevent $1, $& evaluation on untrusted content
+  t = t.replace(/\*\*([^*]+)\*\*/g, (_, bold) => `<strong style="font-weight:500;color:var(--text)">${bold}</strong>`);
   return t;
 }
 
