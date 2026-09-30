@@ -8,6 +8,7 @@ const modelPill = document.getElementById('model-pill');
 const copyRev   = document.getElementById('copy-rev');
 const toastEl   = document.getElementById('toast');
 
+const MAX_CODE_LENGTH = 50000;
 let fullReview = '';
 let toastTimer;
 
@@ -204,10 +205,10 @@ function inline(raw) {
   t = t.replace(/\[HIGH\]/g, '<span class="badge b-h">HIGH</span>');
   t = t.replace(/\[MED\]/g,  '<span class="badge b-m">MED</span>');
   t = t.replace(/\[LOW\]/g,  '<span class="badge b-l">LOW</span>');
-  // Inline code  `foo`
-  t = t.replace(/`([^`]+)`/g, '<code class="icode">$1</code>');
-  // Bold  **foo**
-  t = t.replace(/\*\*([^*]+)\*\*/g, '<strong style="font-weight:500;color:var(--text)">$1</strong>');
+  // Inline code  `foo` - use function callback to prevent $ replacement pattern evaluation
+  t = t.replace(/`([^`]+)`/g, (_, code) => `<code class="icode">${code}</code>`);
+  // Bold  **foo** - use function callback to prevent $ replacement pattern evaluation
+  t = t.replace(/\*\*([^*]+)\*\*/g, (_, text) => `<strong style="font-weight:500;color:var(--text)">${text}</strong>`);
   return t;
 }
 
@@ -380,6 +381,12 @@ Rules: use [HIGH], [MED], or [LOW] tags on every bug/security item. Backtick inl
 async function analyze() {
   const code = codeEl.value.trim();
   if (!code) { toast('Paste some code first!'); return; }
+
+  // Enforce input length limit to mitigate DoS and excessive payload risks
+  if (code.length > MAX_CODE_LENGTH) {
+    showError(`Code exceeds maximum length limit of ${MAX_CODE_LENGTH.toLocaleString()} characters.`);
+    return;
+  }
 
   const lang = document.getElementById('lang').value;
 
