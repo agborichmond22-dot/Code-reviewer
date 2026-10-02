@@ -421,6 +421,17 @@ async function analyze() {
     const decoder = new TextDecoder();
     let buf = '';
     let firstChunk = true;
+    let rafId = null;
+
+    // Throttle DOM updates to ~60fps using requestAnimationFrame to prevent main-thread thrashing
+    const scheduleRender = () => {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        outputEl.innerHTML = formatReview(fullReview) + '<span class="cursor"></span>';
+        outputEl.scrollTop = outputEl.scrollHeight;
+      });
+    };
 
     while (true) {
       const { done, value } = await reader.read();
@@ -448,14 +459,17 @@ async function analyze() {
             firstChunk = false;
           }
           fullReview += evt.delta.text;
-          // Re-render with streaming cursor
-          outputEl.innerHTML = formatReview(fullReview) + '<span class="cursor"></span>';
-          outputEl.scrollTop = outputEl.scrollHeight;
+          // Schedule throttled render on next animation frame
+          scheduleRender();
         }
       }
     }
 
-    // Final render — remove streaming cursor
+    // Cancel any pending frame update and perform final render without streaming cursor
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
     outputEl.innerHTML = formatReview(fullReview);
     copyRev.style.display = 'inline-block';
 
