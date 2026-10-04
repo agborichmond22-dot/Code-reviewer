@@ -94,6 +94,8 @@ select:hover {
 
 select:focus-visible {
   border-color: var(--accent-blue);
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 1px;
 }
 
 .btn-run {
@@ -179,6 +181,12 @@ main {
   color: var(--text);
   background: #2a2a2a;
   border-color: var(--accent-blue);
+}
+
+.btn-sm:focus-visible,
+.btn-run:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
 }
 
 .claude-badge {
