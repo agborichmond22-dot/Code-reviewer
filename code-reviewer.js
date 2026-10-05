@@ -422,6 +422,17 @@ async function analyze() {
     let buf = '';
     let firstChunk = true;
 
+    // Throttle DOM re-renders during streaming (~60 FPS) to avoid main-thread CPU thrashing
+    let renderPending = false;
+    let animFrameId = null;
+
+    function renderStreamingReview() {
+      renderPending = false;
+      animFrameId = null;
+      outputEl.innerHTML = formatReview(fullReview) + '<span class="cursor"></span>';
+      outputEl.scrollTop = outputEl.scrollHeight;
+    }
+
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
@@ -448,11 +459,19 @@ async function analyze() {
             firstChunk = false;
           }
           fullReview += evt.delta.text;
-          // Re-render with streaming cursor
-          outputEl.innerHTML = formatReview(fullReview) + '<span class="cursor"></span>';
-          outputEl.scrollTop = outputEl.scrollHeight;
+          // Throttle DOM re-render with requestAnimationFrame (~60 FPS)
+          if (!renderPending) {
+            renderPending = true;
+            animFrameId = requestAnimationFrame(renderStreamingReview);
+          }
         }
       }
+    }
+
+    // Cancel any pending animation frame before final render
+    if (animFrameId !== null) {
+      cancelAnimationFrame(animFrameId);
+      animFrameId = null;
     }
 
     // Final render — remove streaming cursor
