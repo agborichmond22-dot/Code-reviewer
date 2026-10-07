@@ -377,9 +377,15 @@ Rules: use [HIGH], [MED], or [LOW] tags on every bug/security item. Backtick inl
 }
 
 // ── MAIN ANALYZE FUNCTION ─────────────────────────
+const MAX_CODE_LENGTH = 50000; // Limit code input length to mitigate DoS and excessive API payloads
+
 async function analyze() {
   const code = codeEl.value.trim();
   if (!code) { toast('Paste some code first!'); return; }
+  if (code.length > MAX_CODE_LENGTH) {
+    showError(`Code is too long (${code.length.toLocaleString()} characters). Maximum allowed length is ${MAX_CODE_LENGTH.toLocaleString()} characters.`);
+    return;
+  }
 
   const lang = document.getElementById('lang').value;
 
