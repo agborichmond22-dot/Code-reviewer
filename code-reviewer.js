@@ -154,7 +154,7 @@ function copyReview() {
 // ── UI STATE HELPERS ───────────────────────────────
 function showIdle() {
   outputEl.innerHTML = `<div class="idle">
-    <div class="idle-icon">&lt;/&gt;</div>
+    <div class="idle-icon" aria-hidden="true">&lt;/&gt;</div>
     <h3>Ready to review</h3>
     <p>Paste code on the left and click Analyze</p>
     <p style="margin-top:5px">or press <kbd>Ctrl+Enter</kbd></p>
@@ -464,7 +464,7 @@ async function analyze() {
   } finally {
     runBtn.disabled = false;
     runBtn.innerHTML = `
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M5 3l14 9-14 9V3z"/>
       </svg>
       Analyze`;
