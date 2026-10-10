@@ -376,10 +376,20 @@ Format your response exactly using these markdown headings:
 Rules: use [HIGH], [MED], or [LOW] tags on every bug/security item. Backtick inline code references. Give at least 2 items per non-empty section.`;
 }
 
+// ── CONSTANTS & SECURITY CONFIG ────────────────────
+// Input size limit to mitigate Denial of Service (DoS) and excessive payload risks
+const MAX_CODE_LENGTH = 50000;
+
 // ── MAIN ANALYZE FUNCTION ─────────────────────────
 async function analyze() {
   const code = codeEl.value.trim();
   if (!code) { toast('Paste some code first!'); return; }
+
+  // Enforce input size limit to prevent client memory exhaustion & excessive API payload
+  if (code.length > MAX_CODE_LENGTH) {
+    toast(`Code too long (max ${MAX_CODE_LENGTH.toLocaleString()} chars)`);
+    return;
+  }
 
   const lang = document.getElementById('lang').value;
 
