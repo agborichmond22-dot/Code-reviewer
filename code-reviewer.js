@@ -395,6 +395,8 @@ async function analyze() {
   copyRev.style.display   = 'none';
   showLoading();
 
+  let renderFrame = null;
+
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -422,6 +424,17 @@ async function analyze() {
     let buf = '';
     let firstChunk = true;
 
+    // Throttle DOM re-renders during high-frequency SSE streaming to ~60fps via requestAnimationFrame.
+    // Prevents main-thread CPU thrashing and expensive repeated DOM layout recalculations on every incoming token chunk.
+    const scheduleRender = () => {
+      if (renderFrame) return;
+      renderFrame = requestAnimationFrame(() => {
+        renderFrame = null;
+        outputEl.innerHTML = formatReview(fullReview) + '<span class="cursor"></span>';
+        outputEl.scrollTop = outputEl.scrollHeight;
+      });
+    };
+
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
@@ -448,13 +461,15 @@ async function analyze() {
             firstChunk = false;
           }
           fullReview += evt.delta.text;
-          // Re-render with streaming cursor
-          outputEl.innerHTML = formatReview(fullReview) + '<span class="cursor"></span>';
-          outputEl.scrollTop = outputEl.scrollHeight;
+          scheduleRender();
         }
       }
     }
 
+    if (renderFrame) {
+      cancelAnimationFrame(renderFrame);
+      renderFrame = null;
+    }
     // Final render — remove streaming cursor
     outputEl.innerHTML = formatReview(fullReview);
     copyRev.style.display = 'inline-block';
@@ -462,6 +477,10 @@ async function analyze() {
   } catch (err) {
     showError(err.message);
   } finally {
+    if (renderFrame) {
+      cancelAnimationFrame(renderFrame);
+      renderFrame = null;
+    }
     runBtn.disabled = false;
     runBtn.innerHTML = `
       <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
