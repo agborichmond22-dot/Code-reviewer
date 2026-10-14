@@ -8,6 +8,8 @@ const modelPill = document.getElementById('model-pill');
 const copyRev   = document.getElementById('copy-rev');
 const toastEl   = document.getElementById('toast');
 
+const MAX_CODE_LENGTH = 50000;
+
 let fullReview = '';
 let toastTimer;
 
@@ -380,6 +382,12 @@ Rules: use [HIGH], [MED], or [LOW] tags on every bug/security item. Backtick inl
 async function analyze() {
   const code = codeEl.value.trim();
   if (!code) { toast('Paste some code first!'); return; }
+
+  // Security check: Limit input length to mitigate DoS and excessive API payload risks
+  if (code.length > MAX_CODE_LENGTH) {
+    showError(`Code input is too long (${code.length.toLocaleString()} chars). Maximum allowed is ${MAX_CODE_LENGTH.toLocaleString()} chars.`);
+    return;
+  }
 
   const lang = document.getElementById('lang').value;
 
