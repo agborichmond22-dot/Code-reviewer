@@ -12,8 +12,32 @@ let fullReview = '';
 let toastTimer;
 
 // ── LINE NUMBERS ───────────────────────────────────
+let cachedLineCount = 0;
+
+/**
+ * Updates the line number gutter.
+ * Optimized by Bolt ⚡ to prevent typing lag:
+ * 1. Uses native indexOf to count lines in O(N) time with O(1) memory, avoiding split('\n') array allocations.
+ * 2. Compares the line count with a cached value and returns early if unchanged,
+ *    avoiding expensive DOM updates and layout refaints on every keystroke.
+ */
 function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+  const text = codeEl.value;
+  let lines = 1;
+  let pos = 0;
+
+  // Fast line counting using native indexOf
+  while ((pos = text.indexOf('\n', pos)) !== -1) {
+    lines++;
+    pos++;
+  }
+
+  // Early return if the number of lines hasn't changed to avoid touching the DOM
+  if (lines === cachedLineCount) {
+    return;
+  }
+  cachedLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
   gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
 }
