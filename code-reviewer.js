@@ -188,6 +188,8 @@ function toast(msg) {
 }
 
 // ── SAFE HTML HELPERS ──────────────────────────────
+// Sanitize raw text to prevent XSS vulnerabilities when inserted into HTML.
+// Escapes &, <, >, ", and ' (single quotes) to mitigate attribute injection.
 function esc(s) {
   return String(s)
     .replace(/&/g,'&amp;')
