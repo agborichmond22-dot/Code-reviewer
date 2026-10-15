@@ -10,14 +10,29 @@ const toastEl   = document.getElementById('toast');
 
 let fullReview = '';
 let toastTimer;
+let cachedLineCount = -1;
 
 // ── LINE NUMBERS ───────────────────────────────────
+// Optimize gutter updates by skipping DOM re-renders when line count hasn't changed,
+// counting newlines without allocating temporary arrays, and string building efficiently.
 function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
-  lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
-  gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
-}
+  const text = codeEl.value;
+  let lines = 1;
+  for (let i = 0; i < text.length; i++) {
+    if (text.charCodeAt(i) === 10) lines++;
+  }
 
+  if (lines === cachedLineCount) return;
+  cachedLineCount = lines;
+
+  lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
+
+  let gutterHtml = '1';
+  for (let i = 2; i <= lines; i++) {
+    gutterHtml += '<br>' + i;
+  }
+  gutterEl.innerHTML = gutterHtml;
+}
 codeEl.addEventListener('input', updateGutter);
 
 // Sync gutter scroll to editor scroll
