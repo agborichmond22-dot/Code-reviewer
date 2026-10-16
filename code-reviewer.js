@@ -12,8 +12,28 @@ let fullReview = '';
 let toastTimer;
 
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+let cachedLineCount = -1;
+
+// O(N) line counter without intermediate array allocations
+function countLines(str) {
+  let count = 1;
+  for (let i = 0; i < str.length; i++) {
+    if (str.charCodeAt(i) === 10) count++;
+  }
+  return count;
+}
+
+// Throttles DOM updates for line numbers and line count label on keystroke.
+// Only updates DOM when the line count actually changes.
+function updateGutter(force = false) {
+  const text = codeEl.value;
+  const lines = countLines(text);
+
+  // Early return if line count hasn't changed, unless force === true
+  // Note: strict boolean check prevents browser Event object from being treated as truthy force flag
+  if (lines === cachedLineCount && force !== true) return;
+  cachedLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
   gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
 }
