@@ -1,3 +1,6 @@
+// ── CONSTANTS ──────────────────────────────────────
+const MAX_CODE_LENGTH = 50000;
+
 // ── DOM refs ───────────────────────────────────────
 const codeEl    = document.getElementById('code-input');
 const outputEl  = document.getElementById('output');
@@ -380,6 +383,10 @@ Rules: use [HIGH], [MED], or [LOW] tags on every bug/security item. Backtick inl
 async function analyze() {
   const code = codeEl.value.trim();
   if (!code) { toast('Paste some code first!'); return; }
+  if (code.length > MAX_CODE_LENGTH) {
+    toast(`Code exceeds maximum limit of ${MAX_CODE_LENGTH.toLocaleString()} characters!`);
+    return;
+  }
 
   const lang = document.getElementById('lang').value;
 
