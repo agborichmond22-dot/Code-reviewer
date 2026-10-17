@@ -10,12 +10,36 @@ const toastEl   = document.getElementById('toast');
 
 let fullReview = '';
 let toastTimer;
+let cachedLineCount = -1;
+
+// Fast character scanning to count newline characters in O(n) without array allocation
+function countLines(str) {
+  let count = 1;
+  for (let i = 0; i < str.length; i++) {
+    if (str.charCodeAt(i) === 10) count++;
+  }
+  return count;
+}
 
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+// Performance optimization: Avoid DOM updates and array allocations when line count is unchanged.
+// Note: When registered directly as an event listener, force receives an Event object, so check force === true strictly.
+function updateGutter(force = false) {
+  const val = codeEl.value;
+  const lines = countLines(val);
+
+  if (force !== true && lines === cachedLineCount) {
+    return;
+  }
+
+  cachedLineCount = lines;
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
-  gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
+
+  let gutterHTML = '1';
+  for (let i = 2; i <= lines; i++) {
+    gutterHTML += '<br>' + i;
+  }
+  gutterEl.innerHTML = gutterHTML;
 }
 
 codeEl.addEventListener('input', updateGutter);
@@ -130,12 +154,12 @@ class AuthService {
 function loadExample() {
   const lang = document.getElementById('lang').value;
   codeEl.value = EXAMPLES[lang] || EXAMPLES.javascript;
-  updateGutter();
+  updateGutter(true);
 }
 
 function clearAll() {
   codeEl.value = '';
-  updateGutter();
+  updateGutter(true);
   showIdle();
 }
 
