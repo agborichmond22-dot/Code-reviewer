@@ -1,3 +1,5 @@
+const MAX_CODE_LENGTH = 50000;
+
 // ── DOM refs ───────────────────────────────────────
 const codeEl    = document.getElementById('code-input');
 const outputEl  = document.getElementById('output');
@@ -205,9 +207,9 @@ function inline(raw) {
   t = t.replace(/\[MED\]/g,  '<span class="badge b-m">MED</span>');
   t = t.replace(/\[LOW\]/g,  '<span class="badge b-l">LOW</span>');
   // Inline code  `foo`
-  t = t.replace(/`([^`]+)`/g, '<code class="icode">$1</code>');
+  t = t.replace(/`([^`]+)`/g, (_, g1) => `<code class="icode">${g1}</code>`);
   // Bold  **foo**
-  t = t.replace(/\*\*([^*]+)\*\*/g, '<strong style="font-weight:500;color:var(--text)">$1</strong>');
+  t = t.replace(/\*\*([^*]+)\*\*/g, (_, g1) => `<strong style="font-weight:500;color:var(--text)">${g1}</strong>`);
   return t;
 }
 
@@ -380,6 +382,10 @@ Rules: use [HIGH], [MED], or [LOW] tags on every bug/security item. Backtick inl
 async function analyze() {
   const code = codeEl.value.trim();
   if (!code) { toast('Paste some code first!'); return; }
+  if (code.length > MAX_CODE_LENGTH) {
+    toast(`Code is too long (max ${MAX_CODE_LENGTH.toLocaleString()} chars)`);
+    return;
+  }
 
   const lang = document.getElementById('lang').value;
 
