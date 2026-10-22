@@ -1,0 +1,3 @@
+## 2026-10-22 - Editor Gutter Line Count Caching & Textarea Line Endings
+**Learning:** High-frequency input events in plain textarea code editors trigger CPU/allocation overhead if splitting strings on every keystroke (`.split('\n')`). Furthermore, browser DOM `<textarea>.value` always normalizes line endings to `\n` (LF) regardless of OS or file CRLF line endings, so fast string searches like `indexOf('\n')` must explicitly target `\n`.
+**Action:** Fast line counting in textareas should use `indexOf('\n')` with an early-return cached line count check to avoid unnecessary DOM gutter reflows when line count is unchanged.
