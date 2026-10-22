@@ -464,7 +464,7 @@ async function analyze() {
   } finally {
     runBtn.disabled = false;
     runBtn.innerHTML = `
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M5 3l14 9-14 9V3z"/>
       </svg>
       Analyze`;
