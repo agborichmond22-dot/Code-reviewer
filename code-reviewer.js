@@ -10,12 +10,29 @@ const toastEl   = document.getElementById('toast');
 
 let fullReview = '';
 let toastTimer;
+let cachedLineCount = -1;
 
 // ── LINE NUMBERS ───────────────────────────────────
+// Optimized line count & gutter rendering to avoid array allocations (.split)
+// and unnecessary DOM updates on keystrokes when line count is unchanged.
 function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+  const val = codeEl.value;
+  let lines = 1, pos = 0;
+  while ((pos = val.indexOf('\n', pos)) !== -1) {
+    lines++;
+    pos++;
+  }
+
+  if (lines === cachedLineCount) return;
+  cachedLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
-  gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
+  let html = '';
+  for (let i = 1; i <= lines; i++) {
+    if (i > 1) html += '<br>';
+    html += i;
+  }
+  gutterEl.innerHTML = html;
 }
 
 codeEl.addEventListener('input', updateGutter);
