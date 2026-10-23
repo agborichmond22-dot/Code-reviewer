@@ -12,8 +12,18 @@ let fullReview = '';
 let toastTimer;
 
 // ── LINE NUMBERS ───────────────────────────────────
+let cachedLineCount = 0;
+
 function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+  // Fast newline count using native regex search without splitting full document string
+  const val = codeEl.value;
+  const lines = (val.match(/\n/g) || []).length + 1;
+
+  // Performance optimization: skip DOM updates and array allocations
+  // if line count hasn't changed during editor typing
+  if (lines === cachedLineCount) return;
+  cachedLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
   gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
 }
