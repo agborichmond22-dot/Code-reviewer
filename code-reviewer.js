@@ -134,6 +134,9 @@ function loadExample() {
 }
 
 function clearAll() {
+  if (codeEl.value.trim() && !confirm('Are you sure you want to clear your code?')) {
+    return;
+  }
   codeEl.value = '';
   updateGutter();
   showIdle();
