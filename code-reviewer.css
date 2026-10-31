@@ -94,6 +94,8 @@ select:hover {
 
 select:focus-visible {
   border-color: var(--accent-blue);
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 1px;
 }
 
 .btn-run {
@@ -120,6 +122,11 @@ select:focus-visible {
   color: var(--text-md);
   border-color: var(--border);
   cursor: not-allowed;
+}
+
+.btn-run:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
 }
 
 main {
@@ -181,6 +188,11 @@ main {
   border-color: var(--accent-blue);
 }
 
+.btn-sm:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 1px;
+}
+
 .claude-badge {
   font-size: 11px;
   background: var(--accent-blue-bg);
@@ -228,6 +240,11 @@ main {
   resize: none;
   outline: none;
   tab-size: 2;
+}
+
+#code-input:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: -2px;
 }
 
 #code-input::placeholder {
