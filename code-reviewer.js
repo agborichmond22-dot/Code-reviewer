@@ -12,10 +12,21 @@ let fullReview = '';
 let toastTimer;
 
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+// Optimization: Cache line count to avoid redundant DOM updates during typing.
+// Counting newlines with regex avoids allocating an array of strings via .split('\n').
+let cachedLineCount = 0;
+function updateGutter(force = false) {
+  const val = codeEl.value;
+  const nl = val.match(/\n/g);
+  const lines = (nl ? nl.length : 0) + 1;
+  if (force !== true && lines === cachedLineCount) return;
+  cachedLineCount = lines;
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
-  gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
+  let gutterHtml = '';
+  for (let i = 1; i <= lines; i++) {
+    gutterHtml += (i === 1 ? '' : '<br>') + i;
+  }
+  gutterEl.innerHTML = gutterHtml;
 }
 
 codeEl.addEventListener('input', updateGutter);
