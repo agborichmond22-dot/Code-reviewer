@@ -12,10 +12,24 @@ let fullReview = '';
 let toastTimer;
 
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+let cachedLineCount = 0;
+
+// Performance optimization: Avoid redundant DOM updates and array allocations on every keystroke
+// when the line count is unchanged. Regex counting uses SIMD scanning and avoids array allocation.
+function updateGutter(force = false) {
+  const val = codeEl.value;
+  const match = val.match(/\n/g);
+  const lines = (match ? match.length : 0) + 1;
+
+  if (force !== true && lines === cachedLineCount) return;
+  cachedLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
-  gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
+  let gutterHtml = '';
+  for (let i = 1; i <= lines; i++) {
+    gutterHtml += (i === 1 ? '' : '<br>') + i;
+  }
+  gutterEl.innerHTML = gutterHtml;
 }
 
 codeEl.addEventListener('input', updateGutter);
@@ -130,12 +144,12 @@ class AuthService {
 function loadExample() {
   const lang = document.getElementById('lang').value;
   codeEl.value = EXAMPLES[lang] || EXAMPLES.javascript;
-  updateGutter();
+  updateGutter(true);
 }
 
 function clearAll() {
   codeEl.value = '';
-  updateGutter();
+  updateGutter(true);
   showIdle();
 }
 
@@ -472,5 +486,5 @@ async function analyze() {
 }
 
 
-updateGutter();
+updateGutter(true);
 loadExample();
