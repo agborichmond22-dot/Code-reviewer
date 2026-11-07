@@ -134,6 +134,9 @@ function loadExample() {
 }
 
 function clearAll() {
+  if (codeEl.value && !confirm('Clear all code in the editor?')) {
+    return;
+  }
   codeEl.value = '';
   updateGutter();
   showIdle();
