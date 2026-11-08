@@ -10,12 +10,31 @@ const toastEl   = document.getElementById('toast');
 
 let fullReview = '';
 let toastTimer;
+let cachedLineCount = 0;
 
 // ── LINE NUMBERS ───────────────────────────────────
-function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+// Performance: O(1) early return when line count is unchanged on keystroke,
+// avoid array allocations from split('\n'), and build HTML with direct string concatenation.
+function updateGutter(force = false) {
+  const val = codeEl.value;
+  let lines = 1;
+  let pos = 0;
+  while ((pos = val.indexOf('\n', pos)) !== -1) {
+    lines++;
+    pos++;
+  }
+
+  // Event handlers pass an Event object; strictly compare boolean for force
+  if (force !== true && lines === cachedLineCount) return;
+  cachedLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
-  gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
+
+  let html = '';
+  for (let i = 1; i <= lines; i++) {
+    html += (i === 1 ? '' : '<br>') + i;
+  }
+  gutterEl.innerHTML = html;
 }
 
 codeEl.addEventListener('input', updateGutter);

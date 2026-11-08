@@ -1,0 +1,3 @@
+## 2026-11-08 - Gutter line count early return and memory allocation
+**Learning:** Recomputing line gutters on every textarea keystroke by executing `split('\n')` and `Array.from().join('<br>')` creates unnecessary array allocations and layout/DOM churn even when line count does not change. Passing functions with default arguments directly to `addEventListener` passes an `Event` object which evaluates as truthy, so `force` parameters must be checked with strict equality (`force === true`).
+**Action:** Cache the line count, check `force === true`, perform an O(1) early return when unchanged, and use an imperative `indexOf('\n')` count loop to eliminate intermediate array allocations.
