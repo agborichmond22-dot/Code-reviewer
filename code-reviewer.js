@@ -10,12 +10,33 @@ const toastEl   = document.getElementById('toast');
 
 let fullReview = '';
 let toastTimer;
+let lastLineCount = 0;
+
+// Count lines without array allocations by scanning for newline characters
+function countLines(str) {
+  let count = 1;
+  let pos = 0;
+  while ((pos = str.indexOf('\n', pos)) !== -1) {
+    count++;
+    pos++;
+  }
+  return count;
+}
 
 // ── LINE NUMBERS ───────────────────────────────────
+// Optimized: skip redundant DOM updates if line count hasn't changed during typing,
+// and construct gutter HTML string directly to avoid temporary array allocations.
 function updateGutter() {
-  const lines = codeEl.value.split('\n').length;
+  const lines = countLines(codeEl.value);
+  if (lines === lastLineCount) return;
+  lastLineCount = lines;
+
   lineCount.textContent = lines + (lines === 1 ? ' line' : ' lines');
-  gutterEl.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
+  let gutterHtml = '';
+  for (let i = 1; i <= lines; i++) {
+    gutterHtml += (i === 1 ? '1' : '<br>' + i);
+  }
+  gutterEl.innerHTML = gutterHtml;
 }
 
 codeEl.addEventListener('input', updateGutter);
